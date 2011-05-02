@@ -1,6 +1,7 @@
 package edgruberman.bukkit.simplelocks;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -256,11 +257,15 @@ public class Lock {
     }
     
     public boolean hasAccess(String name) {
-        return this.isOwner(name)
-            || Arrays.asList(this.getSignBlock().getLines())
-                    .subList(2, Math.min(this.getSignBlock().getLines().length, 4))
-                    .contains(name)
-        ;
+        if (this.isOwner(name)) return true;
+        
+        List<String> access = Arrays.asList(this.getSignBlock().getLines())
+            .subList(2, Math.min(this.getSignBlock().getLines().length, 4));
+        for (String member : access) {
+            if (member.equalsIgnoreCase(name)) return true;
+        }
+        
+        return false;
     }
     
     public String getOwner() {
@@ -272,7 +277,7 @@ public class Lock {
     }
     
     public boolean isOwner(String name) {
-        return this.getSignBlock().getLine(1).equals(name);
+        return this.getSignBlock().getLine(1).equalsIgnoreCase(name);
     }
     
     public Block getLocked() {
