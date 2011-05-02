@@ -35,10 +35,10 @@ public class CommandManager implements CommandExecutor
             if (action.equals("remove")) action = "-access";
         }
         
-        Lock lock = new Lock(player.getTargetBlock(null, 3));
+        Lock lock = Lock.getLock(player.getTargetBlock(null, 3));
         if (!lock.isLock()) {
             Main.messageManager.respond(sender, MessageLevel.WARNING
-                    , "No lock identifed at target.");
+                    , "No lock identifed.");
             return true;
         }
 
