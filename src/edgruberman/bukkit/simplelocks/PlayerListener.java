@@ -1,6 +1,7 @@
 package edgruberman.bukkit.simplelocks;
 
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -50,7 +51,8 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         // No existing lock, check to see if player is requesting a lock be created.
         if (event.getClickedBlock().getType().equals(Material.CHEST)) {
             if (event.getMaterial().equals(Material.SIGN)
-                    && event.getClickedBlock().getRelative(event.getBlockFace()).getType().equals(Material.AIR)) {
+                    && event.getClickedBlock().getRelative(event.getBlockFace()).getType().equals(Material.AIR)
+                    && !event.getBlockFace().equals(BlockFace.UP) && !event.getBlockFace().equals(BlockFace.DOWN)) {
                 // Right click on a chest with a sign to create lock automatically.
                 event.setUseInteractedBlock(Result.DENY); // Don't open the chest.
                 event.getPlayer().setItemInHand(null);    // Pay the piper.
