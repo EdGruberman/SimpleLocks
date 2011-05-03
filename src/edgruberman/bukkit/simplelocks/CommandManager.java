@@ -36,7 +36,7 @@ public class CommandManager implements CommandExecutor
         }
         
         Lock lock = Lock.getLock(player.getTargetBlock(null, 3));
-        if (!lock.isLock()) {
+        if (lock == null || !lock.isLock()) {
             Main.messageManager.respond(sender, MessageLevel.WARNING
                     , "No lock identifed.");
             return true;
