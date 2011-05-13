@@ -3,33 +3,27 @@ package edgruberman.bukkit.simplelocks;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 
-import edgruberman.bukkit.simplelocks.MessageManager.MessageLevel;
+import edgruberman.bukkit.messagemanager.MessageLevel;
+import edgruberman.bukkit.messagemanager.MessageManager;
 
 public class Main extends org.bukkit.plugin.java.JavaPlugin {
     
-    private final String DEFAULT_LOCK_TRIGGER = "+lock";
-    private final String DEFAULT_LOCK_TITLE   = "§1++ LOCKED ++";
-    
-    private final String DEFAULT_LOG_LEVEL  = "RIGHTS";
-    private final String DEFAULT_SEND_LEVEL = "RIGHTS";
-    
-    public static MessageManager messageManager = null;
+    public static MessageManager messageManager;
     
     private static String trigger = null;
+    
+    public void onLoad() {
+        Configuration.load(this);
+    }
     
     public void onEnable() {
         Main.messageManager = new MessageManager(this);
         Main.messageManager.log("Version " + this.getDescription().getVersion());
-        
-        Configuration.load(this);
-        
-        Main.messageManager.setLogLevel( MessageLevel.parse(this.getConfiguration().getString("logLevel",  this.DEFAULT_LOG_LEVEL)));
-        Main.messageManager.setSendLevel(MessageLevel.parse(this.getConfiguration().getString("sendLevel", this.DEFAULT_SEND_LEVEL)));
-        
-        Main.trigger = this.getConfiguration().getString("trigger", this.DEFAULT_LOCK_TRIGGER);
+               
+        Main.trigger = this.getConfiguration().getString("trigger");
         Main.messageManager.log(MessageLevel.CONFIG, "Lock Trigger: " + Main.trigger);
         
-        Lock.setTitle(this.getConfiguration().getString("title", this.DEFAULT_LOCK_TITLE));
+        Lock.setTitle(this.getConfiguration().getString("title"));
         Main.messageManager.log(MessageLevel.CONFIG, "Lock Title: " + Lock.getTitle());
         
         this.registerEvents();

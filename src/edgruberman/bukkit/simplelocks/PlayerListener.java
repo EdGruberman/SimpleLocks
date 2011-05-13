@@ -6,7 +6,7 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import edgruberman.bukkit.simplelocks.MessageManager.MessageLevel;
+import edgruberman.bukkit.messagemanager.MessageLevel;
 
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     

@@ -1,4 +1,5 @@
 trigger: '+lock'
 title: '§1++ LOCKED ++'
-logLevel: RIGHTS
-sendLevel: RIGHTS
+level:
+    log: RIGHTS
+    send: RIGHTS

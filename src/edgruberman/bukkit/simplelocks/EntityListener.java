@@ -3,7 +3,7 @@ package edgruberman.bukkit.simplelocks;
 import org.bukkit.block.Block;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
-import edgruberman.bukkit.simplelocks.MessageManager.MessageLevel;
+import edgruberman.bukkit.messagemanager.MessageLevel;
 
 public class EntityListener extends org.bukkit.event.entity.EntityListener {
     
