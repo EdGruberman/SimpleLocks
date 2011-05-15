@@ -16,6 +16,7 @@
         <pathelement path="${lib}"/>
         <pathelement location="../../bukkit.jar"/>
         <pathelement location="../../MessageManager.jar"/>
+        <pathelement location="../lib/SimpleGroups.jar"/>
     </path>
 
     <target name="JAR Export" depends="Clean">

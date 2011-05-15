@@ -39,9 +39,17 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         
         // Do not modify existing locks further.
         if (Lock.isLock(event.getBlock())) return;
+        
+        // Check for default owner substitute. (Useful for long names that won't fit on a sign.)
+        String ownerName = Main.getDefaultOwner(event.getPlayer());
+        if (ownerName.length() > 15) {
+            Main.messageManager.send(event.getPlayer(), MessageLevel.SEVERE
+                    , "Unable to create lock; Owner name is too long.");
+            return;
+        }
 
         // Create new lock.
-        Lock lock = new Lock(event.getBlock(), event.getPlayer(), event.getLines());
+        Lock lock = new Lock(event.getBlock(), ownerName, event.getLines());
         if (!lock.isLock()) return;
         
         // Set event to use newly configured lock lines.

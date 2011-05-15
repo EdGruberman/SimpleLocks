@@ -1,7 +1,7 @@
 name: SimpleLocks
 description: Locks for blocks.
 version: %VERSION%
-depend: [MessageManager]
+depend: [MessageManager, SimpleGroups]
 main: edgruberman.bukkit.simplelocks.Main
 author: EdGruberman (ed@rjump.com)
 commands:

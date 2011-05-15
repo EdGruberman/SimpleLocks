@@ -60,20 +60,20 @@ public class CommandManager implements CommandExecutor
                 return true;
             }
             
-            if (lock.hasAccess(split[1])) {
+            if (lock.hasAccess(split[1], true)) {
                 Main.messageManager.respond(sender, MessageLevel.WARNING
-                        , "\"" + split[1] + "\" already has access to this lock.");
+                        , "\"" + split[1] + "\" already has direct access to this lock.");
                 return true;
             }
             
             lock.addAccess(split[1]);
-            if (lock.hasAccess(split[1])) {
+            if (lock.hasAccess(split[1], true)) {
                 Main.messageManager.respond(sender, MessageLevel.STATUS
-                        , "\"" + split[1] + "\" now has access to this lock.");
+                        , "\"" + split[1] + "\" now has direct access to this lock.");
                 lock.refresh();
             } else {
                 Main.messageManager.respond(sender, MessageLevel.SEVERE
-                        , "Unable to add access to \"" + split[1] + "\" for this lock.");
+                        , "Unable to add direct access to \"" + split[1] + "\" for this lock.");
             }
             
             return true;
@@ -86,20 +86,20 @@ public class CommandManager implements CommandExecutor
                 return true;
             }
             
-            if (!lock.hasAccess(split[1])) {
+            if (!lock.hasAccess(split[1], true)) {
                 Main.messageManager.respond(sender, MessageLevel.WARNING
-                        , "\"" + split[1] + "\" does not currently have access to this lock.");
+                        , "\"" + split[1] + "\" does not currently have direct access to this lock.");
                 return true;
             }
             
             lock.removeAccess(split[1]);
-            if (!lock.hasAccess(split[1])) {
+            if (!lock.hasAccess(split[1], true)) {
                 Main.messageManager.respond(sender, MessageLevel.STATUS
-                        , "\"" + split[1] + "\" has had access removed for this lock.");
+                        , "\"" + split[1] + "\" has had direct access removed for this lock.");
                 lock.refresh();
             } else {
                 Main.messageManager.respond(sender, MessageLevel.SEVERE
-                        , "Unable to remove access for \"" + split[1] + "\" on this lock.");
+                        , "Unable to remove direct access for \"" + split[1] + "\" on this lock.");
             }
             
             return true;
@@ -124,7 +124,7 @@ public class CommandManager implements CommandExecutor
             
             lock.removeAccess(split[1]);
             lock.setOwner(split[1]);
-            if (lock.isOwner(split[1])) {
+            if (lock.isOwner(split[1], true)) {
                 Main.messageManager.respond(player, MessageLevel.STATUS
                         , "\"" + split[1] + "\" has been set as the owner for this lock.");
                 lock.refresh();

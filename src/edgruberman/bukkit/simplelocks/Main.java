@@ -1,5 +1,6 @@
 package edgruberman.bukkit.simplelocks;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 
@@ -8,7 +9,7 @@ import edgruberman.bukkit.messagemanager.MessageManager;
 
 public class Main extends org.bukkit.plugin.java.JavaPlugin {
     
-    public static MessageManager messageManager;
+    protected static MessageManager messageManager;
     
     private static String trigger = null;
     
@@ -54,7 +55,11 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
         pluginManager.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Normal, this);
     }
     
-    public static boolean hasTrigger(String line) {
+    protected static String getDefaultOwner(Player player) {
+        return Configuration.getConfiguration().getString("defaultOwners." + player.getName(), player.getName());
+    }
+    
+    protected static boolean hasTrigger(String line) {
         if (line.length() == 0) return false;
         
         return line.toLowerCase().contains(Main.trigger.toLowerCase());

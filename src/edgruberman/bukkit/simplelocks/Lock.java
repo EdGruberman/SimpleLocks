@@ -51,13 +51,6 @@ public class Lock {
         this(block, attachedFace, owner.getName(), null);
     }
     
-    /**
-     * Create new lock from nothing with only owner access.
-     * 
-     * @param block Block to place lock at.
-     * @param attachedFace Face adjacent to lockable block.
-     * @param owner Owner of the lock.
-     */
     public Lock(Block block, BlockFace attachedFace, String owner) {
         this(block, attachedFace, owner, null);
     }
@@ -69,8 +62,8 @@ public class Lock {
      * @param owner Owner of the lock.
      * @param lines All four lines of the sign containing any additional names with access to lock on lines 2, 3, or 4. (Only two will be added maximum.)
      */
-    public Lock(Block block, Player owner, String[] lines) {
-        this(block, null, owner.getName(), lines);
+    public Lock(Block block, String owner, String[] lines) {
+        this(block, null, owner, lines);
     }
     
     public Lock(Block block, BlockFace attachedFace, String owner, String[] lines) {
@@ -191,8 +184,8 @@ public class Lock {
     public void addAccess(String name) {
         name = Lock.left(name, 15);
         
-        // Do not add access if name already has access.
-        if (this.hasAccess(name)) return;
+        // Do not add access if name already has direct access. (not in a group)
+        if (this.hasAccess(name, true)) return;
         
         org.bukkit.block.Sign state = this.getSignBlock();
         
@@ -211,13 +204,13 @@ public class Lock {
         name = Lock.left(name, 15);
         
         // Do not remove access if name does not already have access.
-        if (!this.hasAccess(name)) return;
+        if (!this.hasAccess(name, true)) return;
         
         // Find line with matching name.
         org.bukkit.block.Sign state = this.getSignBlock();
         Integer removeFrom = null;
-        if (state.getLine(2) != null && state.getLine(2).equals(name)) removeFrom = 2;
-        else if (state.getLine(3) != null && state.getLine(3).equals(name)) removeFrom = 3;
+        if (state.getLine(2) != null && state.getLine(2).equalsIgnoreCase(name)) removeFrom = 2;
+        else if (state.getLine(3) != null && state.getLine(3).equalsIgnoreCase(name)) removeFrom = 3;
         
         if (removeFrom == null) return; 
         
@@ -257,12 +250,23 @@ public class Lock {
     }
     
     public boolean hasAccess(String name) {
-        if (this.isOwner(name)) return true;
+        return this.hasAccess(name, false);
+    }
+    
+    public boolean hasAccess(String name, boolean directOnly) {
+        if (this.isOwner(name, directOnly)) return true;
         
         List<String> access = Arrays.asList(this.getSignBlock().getLines())
             .subList(2, Math.min(this.getSignBlock().getLines().length, 4));
-        for (String member : access) {
-            if (member.equalsIgnoreCase(name)) return true;
+        for (String line : access) {
+            // Direct name match.
+            if (line.equalsIgnoreCase(name)) return true;
+            
+            if (!directOnly) {
+                // Check group membership.
+                if (line.startsWith("[") && line.endsWith("]"))
+                    if (GroupManager.isMember(line.substring(1, line.length() - 1), name)) return true;
+            }
         }
         
         return false;
@@ -277,7 +281,22 @@ public class Lock {
     }
     
     public boolean isOwner(String name) {
-        return this.getSignBlock().getLine(1).equalsIgnoreCase(name);
+        return this.isOwner(name, false);
+    }
+    
+    public boolean isOwner(String name, boolean directOnly) {
+        String owner = this.getSignBlock().getLine(1);
+    
+        // Direct name match.
+        if (owner.equalsIgnoreCase(name)) return true;
+        
+        if (!directOnly) {
+            // Check group membership.
+            if (owner.startsWith("[") && owner.endsWith("]"))
+                if (GroupManager.isMember(owner.substring(1, owner.length() - 1), name)) return true;
+        }
+        
+        return false;
     }
     
     public Block getLocked() {

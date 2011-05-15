@@ -9,16 +9,18 @@ import java.net.URL;
 import org.bukkit.plugin.Plugin;
 
 public class Configuration {
-
+    
     // Name of configuration file. (Used for both default supplied in JAR and the active one in the file system.)
     private static final String FILE = "config.yml";
     
     // Path to default configuration file supplied in JAR.
     private static final String DEFAULT_PATH = "/defaults/" + Configuration.FILE;
     
-    private Configuration() {}
+    private static Plugin plugin = null;
     
-    public static void load(Plugin plugin) {
+    protected static void load(Plugin plugin) {
+        Configuration.plugin = plugin;
+        
         File fileConfig = new File(plugin.getDataFolder(), Configuration.FILE);
         if (!fileConfig.exists()) {
             try {
@@ -28,7 +30,6 @@ public class Configuration {
                 e.printStackTrace();
             }
         }
-            
         
         plugin.getConfiguration().load();
     }
@@ -46,5 +47,11 @@ public class Configuration {
         }
         in.close();
         out.close();
+    }
+    
+    protected static org.bukkit.util.config.Configuration getConfiguration() {
+        if (plugin == null) return null;
+        
+        return plugin.getConfiguration();
     }
 }

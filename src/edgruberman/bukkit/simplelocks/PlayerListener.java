@@ -53,14 +53,25 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             if (event.getMaterial().equals(Material.SIGN)
                     && event.getClickedBlock().getRelative(event.getBlockFace()).getType().equals(Material.AIR)
                     && !event.getBlockFace().equals(BlockFace.UP) && !event.getBlockFace().equals(BlockFace.DOWN)) {
+                
                 // Right click on a chest with a sign to create lock automatically.
                 event.setUseInteractedBlock(Result.DENY); // Don't open the chest.
-                event.getPlayer().setItemInHand(null);    // Pay the piper.
+                
+                // Check for default owner substitute. (Useful for long names that won't fit on a sign.)
+                String ownerName = Main.getDefaultOwner(event.getPlayer());
+                if (ownerName.length() > 15) {
+                    Main.messageManager.send(event.getPlayer(), MessageLevel.SEVERE
+                            , "Unable to create lock; Owner name is too long.");
+                    return;
+                }
+                
+                // Pay the piper.
+                event.getPlayer().setItemInHand(null);
                 
                 // Create lock.
                 new Lock(event.getClickedBlock().getRelative(event.getBlockFace())
                         , event.getBlockFace().getOppositeFace()
-                        , event.getPlayer()
+                        , ownerName
                 );
             }
         }
