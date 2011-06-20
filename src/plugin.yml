@@ -1,7 +1,7 @@
 name: SimpleLocks
 description: Locks for blocks.
 version: %VERSION%
-depend: [MessageManager, SimpleGroups]
+depend: [MessageManager, SimpleSecurity]
 main: edgruberman.bukkit.simplelocks.Main
 author: EdGruberman (ed@rjump.com)
 commands:
@@ -11,6 +11,5 @@ commands:
             /<command> - Show the current lock status for block targeted.
             /<command> (+|-) <Name> - Add or remove <Name> with access.
             [Server Operators]
-            /<command> pick - Open the locked block.
             /<command> owner <Owner> - Change lock owner.
             /<command> break - Remove the lock.
