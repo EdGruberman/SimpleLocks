@@ -8,7 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import edgruberman.bukkit.simplesecurity.AccountManager;
+import edgruberman.bukkit.accesscontrol.AccountManager;
 
 public class Lock {
     private static String title;
