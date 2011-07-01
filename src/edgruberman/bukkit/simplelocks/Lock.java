@@ -8,9 +8,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import edgruberman.accesscontrol.Principal;
 import edgruberman.bukkit.accesscontrol.AccountManager;
 
 public class Lock {
+    
     private static String title;
     
     private Block block = null;
@@ -57,7 +59,7 @@ public class Lock {
         } else {
             attachedTo = this.setAttachedFace(attachedFace);
         }
-        if (attachedTo == null) return; //TODO raise error
+        if (attachedTo == null) throw new IllegalArgumentException("Unable to find lockable block.");
         
         this.setOwner(owner);
         
@@ -166,7 +168,7 @@ public class Lock {
         if (attachedFace == null) return null;
         
         Block locked = this.getBlock().getRelative(attachedFace);
-        if (Lock.getLock(locked) != null) return null; //TODO raise error
+        if (Lock.getLock(locked) != null) throw new IllegalArgumentException("Block already locked.");
         
         org.bukkit.material.Sign material = new org.bukkit.material.Sign(Material.WALL_SIGN);
         material.setFacingDirection(attachedFace.getOppositeFace());
@@ -175,15 +177,26 @@ public class Lock {
         return material.getAttachedFace();
     }
     
-    protected void setOwner(String owner) {
-        this.getSignBlock().setLine(1, Lock.left(owner, 15));
+    protected boolean setOwner(String owner) {
+        Principal principal = AccountManager.getAccount(owner);
+        if (principal == null) return false;
+        
+        owner = AccountManager.formatName(principal);
+        if (owner.length() > 15) return false;
+
+        this.getSignBlock().setLine(1, owner);
+        return true;
     }
     
-    protected void addAccess(String name) {
-        name = Lock.left(name, 15);
+    protected boolean addAccess(String name) {
+        Principal principal = AccountManager.getAccount(name);
+        if (principal == null) return false;
+        
+        name = AccountManager.formatName(principal);
+        if (name.length() > 15) return false;
         
         // Do not add access if name already has direct access. (not in a group)
-        if (this.hasAccess(name, true)) return;
+        if (this.hasAccess(name, true)) return false;
         
         org.bukkit.block.Sign state = this.getSignBlock();
         
@@ -193,14 +206,13 @@ public class Lock {
         else if (state.getLine(3).length() == 0) addTo = 3;
         
         // Do not add access if no more room on sign.
-        if (addTo == null) return; // TODO raise error
+        if (addTo == null) return false;
         
         state.setLine(addTo, name);
+        return true;
     }
     
-    protected void removeAccess(String name) {
-        name = Lock.left(name, 15);
-        
+    protected void removeAccess(final String name) {
         // Do not remove access if name does not already have access.
         if (!this.hasAccess(name, true)) return;
         
@@ -231,7 +243,7 @@ public class Lock {
     }
     
     private void setClosed() {
-        this.getSignBlock().setLine(0, Lock.left(Lock.title, 15));
+        this.getSignBlock().setLine(0, Lock.title);
     }
     
     /**
@@ -342,7 +354,10 @@ public class Lock {
      * @param title Text that designates a lock.
      */
     protected static void setTitle(String title) {
-        Lock.title = Lock.left(title, 15);
+        if (title == null || title.length() > 15)
+            throw new IllegalArgumentException("Title must be no more than 15 characters.");
+        
+        Lock.title = title;
     }
     
     /**
@@ -459,19 +474,5 @@ public class Lock {
             return Lock.getChestLock(block, true);
  
         return null;
-    }
-    
-    /**
-     * Utility function to get the leftmost characters of a string or less if
-     * string is smaller than desired characters.
-     * 
-     * @param s String to get the leftmost characters from.
-     * @param len Number of characters to pull at most.
-     * @return
-     */
-    private static String left(String s, int len) {
-        if (s.length() <= len) return s;
-
-        return s.substring(0, len);
     }
 }

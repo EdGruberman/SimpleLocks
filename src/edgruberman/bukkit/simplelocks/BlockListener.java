@@ -21,7 +21,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         
         event.setCancelled(true);
         Main.messageManager.send(event.getPlayer(), MessageLevel.RIGHTS
-                , "You can not remove a lock unless you are the owner.");
+                , "You can not remove a lock unless you are the owner.", false);
         Main.messageManager.log(MessageLevel.FINER
                 , "Cancelled block break to protect lock at"
                 + " x:" + event.getBlock().getX()
@@ -44,7 +44,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         String ownerName = Main.getDefaultOwner(event.getPlayer());
         if (ownerName.length() > 15) {
             Main.messageManager.send(event.getPlayer(), MessageLevel.SEVERE
-                    , "Unable to create lock; Owner name is too long.");
+                    , "Unable to create lock; Owner name is too long.", false);
             return;
         }
 

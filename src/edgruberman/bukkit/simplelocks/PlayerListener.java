@@ -26,7 +26,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
                 // Player does not have access, cancel interaction and notify player.
                 event.setCancelled(true);
                 Main.messageManager.send(event.getPlayer(), MessageLevel.RIGHTS
-                        , "You do not have access to this lock.");
+                        , "You do not have access to this lock.", false);
                 Main.messageManager.log(MessageLevel.FINER
                         , "Lock access denied to " + event.getPlayer().getName() + " at "
                         + " x:" + event.getClickedBlock().getX()
@@ -39,11 +39,11 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             if (Lock.isLock(event.getClickedBlock())) {
                 // Player has access and they right clicked on the lock itself so give them information.
                 Main.messageManager.send(event.getPlayer(), MessageLevel.STATUS
-                        , "You have access to this lock.");
+                        , "You have access to this lock.", false);
                 
                 if (lock.isOwner(event.getPlayer()))
                     Main.messageManager.send(event.getPlayer(), MessageLevel.NOTICE
-                            , "To modify: /lock (+|-) <Player>");
+                            , "To modify: /lock (+|-) <Player>", false);
             }
             return;
         }
@@ -61,7 +61,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
                 String ownerName = Main.getDefaultOwner(event.getPlayer());
                 if (ownerName.length() > 15) {
                     Main.messageManager.send(event.getPlayer(), MessageLevel.SEVERE
-                            , "Unable to create lock; Owner name is too long.");
+                            , "Unable to create lock; Owner name is too long.", false);
                     return;
                 }
                 

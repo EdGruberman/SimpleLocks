@@ -104,7 +104,7 @@ public class CommandManager implements CommandExecutor {
             lock.removeAccess(split[1]);
             if (!lock.hasAccess(split[1], true)) {
                 Main.messageManager.respond(sender, MessageLevel.STATUS
-                        , "\"" + split[1] + "\" has had direct access removed for this lock.");
+                        , "\"" + split[1] + "\" had direct access removed for this lock.");
                 lock.refresh();
             } else {
                 Main.messageManager.respond(sender, MessageLevel.SEVERE
