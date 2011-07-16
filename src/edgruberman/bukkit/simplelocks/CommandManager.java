@@ -24,9 +24,10 @@ public class CommandManager implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
-        Main.messageManager.log(MessageLevel.FINE
-                , ((sender instanceof Player) ? ((Player) sender).getName() : "[CONSOLE]")
-                + " issued command: " + label + " " + join(split)
+        Main.messageManager.log(
+                ((sender instanceof Player) ? ((Player) sender).getName() : "[CONSOLE]")
+                    + " issued command: " + label + " " + join(split)
+                , MessageLevel.FINE
         );
         
         if (!(sender instanceof Player)) return false;
@@ -46,8 +47,7 @@ public class CommandManager implements CommandExecutor {
         
         Lock lock = Lock.getLock(player.getTargetBlock(null, 3));
         if (lock == null || !lock.isLock()) {
-            Main.messageManager.respond(sender, MessageLevel.WARNING
-                    , "No lock identifed.");
+            Main.messageManager.respond(sender, "No lock identifed.", MessageLevel.WARNING);
             return true;
         }
 
@@ -57,32 +57,27 @@ public class CommandManager implements CommandExecutor {
         }
         
         if (!sender.isOp() && !lock.isOwner(player)) {
-            Main.messageManager.respond(sender, MessageLevel.RIGHTS
-                    , "You must be the lock owner to use that command.");
+            Main.messageManager.respond(sender, "You must be the lock owner to use that command.", MessageLevel.RIGHTS);
             return true;
         }
         
         if (action.equals("+access")) {
             if (!(split != null && split[1] != null)) {
-                Main.messageManager.respond(sender, MessageLevel.WARNING
-                        , "No name specified to add access to for this lock.");
+                Main.messageManager.respond(sender, "No name specified to add access to for this lock.", MessageLevel.WARNING);
                 return true;
             }
             
             if (lock.hasAccess(split[1], true)) {
-                Main.messageManager.respond(sender, MessageLevel.WARNING
-                        , "\"" + split[1] + "\" already has direct access to this lock.");
+                Main.messageManager.respond(sender, "\"" + split[1] + "\" already has direct access to this lock.", MessageLevel.WARNING);
                 return true;
             }
             
             lock.addAccess(split[1]);
             if (lock.hasAccess(split[1], true)) {
-                Main.messageManager.respond(sender, MessageLevel.STATUS
-                        , "\"" + split[1] + "\" now has direct access to this lock.");
+                Main.messageManager.respond(sender, "\"" + split[1] + "\" now has direct access to this lock.", MessageLevel.STATUS);
                 lock.refresh();
             } else {
-                Main.messageManager.respond(sender, MessageLevel.SEVERE
-                        , "Unable to add direct access to \"" + split[1] + "\" for this lock.");
+                Main.messageManager.respond(sender, "Unable to add direct access to \"" + split[1] + "\" for this lock.", MessageLevel.SEVERE);
             }
             
             return true;
@@ -90,25 +85,21 @@ public class CommandManager implements CommandExecutor {
         
         if (action.equals("-access")) {
             if (!(split != null && split[1] != null)) {
-                Main.messageManager.respond(sender, MessageLevel.WARNING
-                        , "No name specified to remove access from for this lock.");
+                Main.messageManager.respond(sender, "No name specified to remove access from for this lock.", MessageLevel.WARNING);
                 return true;
             }
             
             if (!lock.hasAccess(split[1], true)) {
-                Main.messageManager.respond(sender, MessageLevel.WARNING
-                        , "\"" + split[1] + "\" does not currently have direct access to this lock.");
+                Main.messageManager.respond(sender, "\"" + split[1] + "\" does not currently have direct access to this lock.", MessageLevel.WARNING);
                 return true;
             }
             
             lock.removeAccess(split[1]);
             if (!lock.hasAccess(split[1], true)) {
-                Main.messageManager.respond(sender, MessageLevel.STATUS
-                        , "\"" + split[1] + "\" had direct access removed for this lock.");
+                Main.messageManager.respond(sender, "\"" + split[1] + "\" had direct access removed for this lock.", MessageLevel.STATUS);
                 lock.refresh();
             } else {
-                Main.messageManager.respond(sender, MessageLevel.SEVERE
-                        , "Unable to remove direct access for \"" + split[1] + "\" on this lock.");
+                Main.messageManager.respond(sender, "Unable to remove direct access for \"" + split[1] + "\" on this lock.", MessageLevel.SEVERE);
             }
             
             return true;
@@ -126,42 +117,40 @@ public class CommandManager implements CommandExecutor {
         
         if (action.equals("owner")) {
             if (!(split != null && split[1] != null)) {
-                Main.messageManager.respond(sender, MessageLevel.WARNING
-                        , "No name specified to change lock owner to.");
+                Main.messageManager.respond(sender, "No name specified to change lock owner to.", MessageLevel.WARNING);
                 return true;
             }
             
             lock.removeAccess(split[1]);
             lock.setOwner(split[1]);
             if (lock.isOwner(split[1], true)) {
-                Main.messageManager.respond(player, MessageLevel.STATUS
-                        , "\"" + split[1] + "\" has been set as the owner for this lock.");
+                Main.messageManager.respond(player, "\"" + split[1] + "\" has been set as the owner for this lock.", MessageLevel.STATUS);
                 lock.refresh();
             } else {
-                Main.messageManager.respond(sender, MessageLevel.SEVERE
-                        , "Unable to set \"" + split[1] + "\" as owner for this lock.");
+                Main.messageManager.respond(sender, "Unable to set \"" + split[1] + "\" as owner for this lock.", MessageLevel.SEVERE);
             }
             
             return true;
         }
         
         if (action.equals("break")) {
-            Main.messageManager.log(MessageLevel.FINE
-                    , "Lock broken by " + player.getName() + " at "
-                    + " x:" + lock.getBlock().getX()
-                    + " y:" + lock.getBlock().getY()
-                    + " z:" + lock.getBlock().getZ()
+            Main.messageManager.log(
+                    "Lock broken by " + player.getName() + " at "
+                        + " x:" + lock.getBlock().getX()
+                        + " y:" + lock.getBlock().getY()
+                        + " z:" + lock.getBlock().getZ()
+                    , MessageLevel.FINE
             );
             lock.getBlock().setType(Material.AIR);
             lock.getBlock().getWorld().dropItemNaturally(lock.getBlock().getLocation(), new ItemStack(Material.SIGN, 1));
-            Main.messageManager.respond(sender, MessageLevel.STATUS, "Lock broken.");
+            Main.messageManager.respond(sender, "Lock broken.", MessageLevel.STATUS);
             return true;
         }
         
         if (action.equals("reload")) {
-            Main.configurationManager.load();
+            Main.configurationFile.load();
             this.plugin.readConfiguration();
-            Main.messageManager.respond(sender, MessageLevel.STATUS, "Configuration reloaded.");
+            Main.messageManager.respond(sender, "Configuration reloaded.", MessageLevel.STATUS);
             return true;
         }
         
@@ -171,19 +160,16 @@ public class CommandManager implements CommandExecutor {
     
     private void actionInfo(Player player, Lock lock) {
         if (!lock.isLock()) {
-            Main.messageManager.send(player, MessageLevel.WARNING
-                    , "No lock identifed at target.");
+            Main.messageManager.send(player, "No lock identifed at target.", MessageLevel.WARNING);
             return;
         }
         
-        Main.messageManager.send(player, MessageLevel.CONFIG, lock.getDescription());
+        Main.messageManager.send(player, lock.getDescription(), MessageLevel.CONFIG);
         
         if (!lock.hasAccess(player)) {
-            Main.messageManager.send(player, MessageLevel.RIGHTS
-                    , "You do not have access to this lock.");
+            Main.messageManager.send(player, "You do not have access to this lock.", MessageLevel.RIGHTS);
         } else if (lock.isOwner(player)) {
-            Main.messageManager.send(player, MessageLevel.NOTICE
-                    , "To modify: /lock (+|-) <Player>");
+            Main.messageManager.send(player, "To modify: /lock (+|-) <Player>", MessageLevel.NOTICE);
         }
     }
     
@@ -195,7 +181,7 @@ public class CommandManager implements CommandExecutor {
     private void setExecutorOf(String label) {
         PluginCommand command = this.plugin.getCommand(label);
         if (command == null) {
-            Main.messageManager.log(MessageLevel.WARNING, "Unable to register \"" + label + "\" command.");
+            Main.messageManager.log("Unable to register \"" + label + "\" command.", MessageLevel.WARNING);
             return;
         }
         

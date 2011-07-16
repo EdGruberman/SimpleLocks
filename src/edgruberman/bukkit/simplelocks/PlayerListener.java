@@ -2,15 +2,19 @@ package edgruberman.bukkit.simplelocks;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.Plugin;
 
 import edgruberman.bukkit.messagemanager.MessageLevel;
 
-public class PlayerListener extends org.bukkit.event.player.PlayerListener {
+public final class PlayerListener extends org.bukkit.event.player.PlayerListener {
     
-    public PlayerListener() {}
+    PlayerListener(Plugin plugin) {
+        plugin.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, this, Event.Priority.Normal, plugin);
+    }
     
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -25,25 +29,23 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             if (!lock.hasAccess(event.getPlayer())) {
                 // Player does not have access, cancel interaction and notify player.
                 event.setCancelled(true);
-                Main.messageManager.send(event.getPlayer(), MessageLevel.RIGHTS
-                        , "You do not have access to this lock.", false);
-                Main.messageManager.log(MessageLevel.FINER
-                        , "Lock access denied to " + event.getPlayer().getName() + " at "
-                        + " x:" + event.getClickedBlock().getX()
-                        + " y:" + event.getClickedBlock().getY()
-                        + " z:" + event.getClickedBlock().getZ()
+                Main.messageManager.send(event.getPlayer(), "You do not have access to this lock.", MessageLevel.RIGHTS, false);
+                Main.messageManager.log(
+                        "Lock access denied to " + event.getPlayer().getName() + " at "
+                            + " x:" + event.getClickedBlock().getX()
+                            + " y:" + event.getClickedBlock().getY()
+                            + " z:" + event.getClickedBlock().getZ()
+                        , MessageLevel.FINER
                 );
                 return;
             }
             
             if (Lock.isLock(event.getClickedBlock())) {
                 // Player has access and they right clicked on the lock itself so give them information.
-                Main.messageManager.send(event.getPlayer(), MessageLevel.STATUS
-                        , "You have access to this lock.", false);
+                Main.messageManager.send(event.getPlayer(), "You have access to this lock.", MessageLevel.STATUS, false);
                 
                 if (lock.isOwner(event.getPlayer()))
-                    Main.messageManager.send(event.getPlayer(), MessageLevel.NOTICE
-                            , "To modify: /lock (+|-) <Player>", false);
+                    Main.messageManager.send(event.getPlayer(), "To modify: /lock (+|-) <Player>", MessageLevel.NOTICE, false);
             }
             return;
         }
@@ -60,8 +62,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
                 // Check for default owner substitute. (Useful for long names that won't fit on a sign.)
                 String ownerName = Main.getDefaultOwner(event.getPlayer());
                 if (ownerName.length() > 15) {
-                    Main.messageManager.send(event.getPlayer(), MessageLevel.SEVERE
-                            , "Unable to create lock; Owner name is too long.", false);
+                    Main.messageManager.send(event.getPlayer(), "Unable to create lock; Owner name is too long.", MessageLevel.SEVERE, false);
                     return;
                 }
                 

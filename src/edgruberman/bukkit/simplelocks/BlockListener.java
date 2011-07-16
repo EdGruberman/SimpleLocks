@@ -1,13 +1,20 @@
 package edgruberman.bukkit.simplelocks;
 
+import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 import edgruberman.bukkit.messagemanager.MessageLevel;
 
-public class BlockListener extends org.bukkit.event.block.BlockListener {
+public final class BlockListener extends org.bukkit.event.block.BlockListener {
     
-    public BlockListener() {}
+    BlockListener(Plugin plugin) {
+        PluginManager pluginManager = plugin.getServer().getPluginManager();
+        pluginManager.registerEvent(Event.Type.BLOCK_BREAK, this, Event.Priority.Normal, plugin);
+        pluginManager.registerEvent(Event.Type.SIGN_CHANGE, this, Event.Priority.Normal, plugin);
+    }
     
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
@@ -20,13 +27,13 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         if (lock.isOwner(event.getPlayer().getName())) return;
         
         event.setCancelled(true);
-        Main.messageManager.send(event.getPlayer(), MessageLevel.RIGHTS
-                , "You can not remove a lock unless you are the owner.", false);
-        Main.messageManager.log(MessageLevel.FINER
-                , "Cancelled block break to protect lock at"
-                + " x:" + event.getBlock().getX()
-                + " y:" + event.getBlock().getY()
-                + " z:" + event.getBlock().getZ()
+        Main.messageManager.send(event.getPlayer(), "You can not remove a lock unless you are the owner.", MessageLevel.RIGHTS, false);
+        Main.messageManager.log(
+                "Cancelled block break to protect lock at"
+                    + " x:" + event.getBlock().getX()
+                    + " y:" + event.getBlock().getY()
+                    + " z:" + event.getBlock().getZ()
+                , MessageLevel.FINER
         );
     }
     
@@ -43,8 +50,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         // Check for default owner substitute. (Useful for long names that won't fit on a sign.)
         String ownerName = Main.getDefaultOwner(event.getPlayer());
         if (ownerName.length() > 15) {
-            Main.messageManager.send(event.getPlayer(), MessageLevel.SEVERE
-                    , "Unable to create lock; Owner name is too long.", false);
+            Main.messageManager.send(event.getPlayer(), "Unable to create lock; Owner name is too long.", MessageLevel.SEVERE, false);
             return;
         }
 
