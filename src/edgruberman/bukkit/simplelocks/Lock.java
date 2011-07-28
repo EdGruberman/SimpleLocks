@@ -399,12 +399,11 @@ public class Lock {
      * @return true if block is a lock attached as specified.
      */
     private static boolean isLock(Block block, BlockFace attachedTo) {
-        org.bukkit.material.Sign material = new org.bukkit.material.Sign(block.getType());
-        
         // Locks are always wall signs.
-        if (!material.isWallSign())
+        if (!block.getType().equals(Material.WALL_SIGN))
             return false;
-
+        
+        org.bukkit.material.Sign material = new org.bukkit.material.Sign(block.getType());
         if (attachedTo != null) {
             // Locks must be directly attached to locked object.
             material.setData(block.getData());
