@@ -1,9 +1,9 @@
-name: SimpleLocks
+name: @NAME@
 description: Locks for blocks.
-version: %VERSION%
 depend: [MessageManager, AccessControl]
+version: @VERSION@
+author: @AUTHOR@
 main: edgruberman.bukkit.simplelocks.Main
-author: EdGruberman (ed@rjump.com)
 commands:
     lock:
         description: Manage locks on blocks.

@@ -398,7 +398,7 @@ public class Lock {
      * @param attachedTo Face connected to locked object. Set to null to determine if block is a lock for anything.
      * @return true if block is a lock attached as specified.
      */
-    private static boolean isLock(Block block, BlockFace attachedTo) {
+    private static boolean isLock(final Block block, final BlockFace attachedTo) {
         // Locks are always wall signs.
         if (!block.getType().equals(Material.WALL_SIGN))
             return false;
@@ -424,7 +424,7 @@ public class Lock {
      * @param chest Chest block (single or either side of a double).
      * @return Lock associated to chest.
      */
-    private static Lock getChestLock(Block chest) {
+    private static Lock getChestLock(final Block chest) {
         return Lock.getChestLock(chest, false);
     }
     
@@ -435,7 +435,7 @@ public class Lock {
      * @param otherHalf true if chest is the second half of a chest.
      * @return Lock associated to chest.
      */
-    private static Lock getChestLock(Block chest, boolean otherHalf) {
+    private static Lock getChestLock(final Block chest, final boolean otherHalf) {
         if (!chest.getType().equals(Material.CHEST)) return null;
         
         Block block;
