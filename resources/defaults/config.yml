@@ -1,5 +1,2 @@
-trigger: '+lock'
+﻿trigger: '+lock'
 title: '§1++ LOCKED ++'
-level:
-    log: RIGHTS
-    send: RIGHTS

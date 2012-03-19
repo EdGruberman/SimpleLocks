@@ -25,7 +25,7 @@ public final class BlockListener implements Listener {
         if (lock.isOwner(event.getPlayer().getName())) return;
 
         event.setCancelled(true);
-        Main.messageManager.send(event.getPlayer(), "You can not remove a lock unless you are the owner.", MessageLevel.RIGHTS, false);
+        Main.messageManager.send(event.getPlayer(), "You can not remove a lock unless you are the owner", MessageLevel.RIGHTS, false);
         Main.messageManager.log(
                 "Cancelled block break to protect lock at"
                     + " x:" + event.getBlock().getX()
@@ -33,6 +33,8 @@ public final class BlockListener implements Listener {
                     + " z:" + event.getBlock().getZ()
                 , MessageLevel.FINER
         );
+
+        lock.refresh();
     }
 
     @EventHandler
@@ -48,7 +50,7 @@ public final class BlockListener implements Listener {
         // Check for default owner substitute. (Useful for long names that won't fit on a sign.)
         final String ownerName = Main.getDefaultOwner(event.getPlayer());
         if (ownerName.length() > 15) {
-            Main.messageManager.send(event.getPlayer(), "Unable to create lock; Owner name is too long.", MessageLevel.SEVERE, false);
+            Main.messageManager.send(event.getPlayer(), "Unable to create lock; Owner name is too long", MessageLevel.SEVERE, false);
             return;
         }
 
@@ -57,8 +59,8 @@ public final class BlockListener implements Listener {
         if (!lock.isLock()) return;
 
         // Set event to use newly configured lock lines.
-        for(int i = 0; i < lock.getSignBlock().getLines().length; i++) {
-            event.setLine(i, lock.getSignBlock().getLine(i));
+        for(int i = 0; i < lock.getState().getLines().length; i++) {
+            event.setLine(i, lock.getState().getLine(i));
         }
     }
 
