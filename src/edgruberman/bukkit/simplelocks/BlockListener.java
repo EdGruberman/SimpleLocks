@@ -1,5 +1,7 @@
 package edgruberman.bukkit.simplelocks;
 
+import java.util.logging.Level;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -10,7 +12,10 @@ import edgruberman.bukkit.messagemanager.MessageLevel;
 
 public final class BlockListener implements Listener {
 
+    private final Plugin plugin;
+
     BlockListener(final Plugin plugin) {
+        this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -26,12 +31,11 @@ public final class BlockListener implements Listener {
 
         event.setCancelled(true);
         Main.messageManager.send(event.getPlayer(), "You can not remove a lock unless you are the owner", MessageLevel.RIGHTS, false);
-        Main.messageManager.log(
+        this.plugin.getLogger().log(Level.FINER,
                 "Cancelled block break to protect lock at"
                     + " x:" + event.getBlock().getX()
                     + " y:" + event.getBlock().getY()
                     + " z:" + event.getBlock().getZ()
-                , MessageLevel.FINER
         );
 
         lock.refresh();

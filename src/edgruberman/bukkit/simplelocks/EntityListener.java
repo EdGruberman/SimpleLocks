@@ -1,16 +1,19 @@
 package edgruberman.bukkit.simplelocks;
 
+import java.util.logging.Level;
+
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
 
-import edgruberman.bukkit.messagemanager.MessageLevel;
-
 public final class EntityListener implements Listener {
 
+    private final Plugin plugin;
+
     EntityListener(final Plugin plugin) {
+        this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -22,12 +25,11 @@ public final class EntityListener implements Listener {
         for (final Block block : event.blockList()) {
             if (Lock.isLock(block) || Lock.getLock(block) != null) {
                 event.setCancelled(true);
-                Main.messageManager.log(
+                this.plugin.getLogger().log(Level.FINER,
                         "Cancelling explosion to protect lock at"
                             + " x:" + block.getX()
                             + " y:" + block.getY()
                             + " z:" + block.getZ()
-                        , MessageLevel.FINER
                 );
                 break;
             }

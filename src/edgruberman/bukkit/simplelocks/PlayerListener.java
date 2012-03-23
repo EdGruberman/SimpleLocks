@@ -1,5 +1,7 @@
 package edgruberman.bukkit.simplelocks;
 
+import java.util.logging.Level;
+
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.Event.Result;
@@ -13,7 +15,10 @@ import edgruberman.bukkit.messagemanager.MessageLevel;
 
 public final class PlayerListener implements Listener {
 
+    private final Plugin plugin;
+
     PlayerListener(final Plugin plugin) {
+        this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -31,12 +36,11 @@ public final class PlayerListener implements Listener {
                 // Player does not have access, cancel interaction and notify player.
                 event.setCancelled(true);
                 Main.messageManager.send(event.getPlayer(), "You do not have access to this lock.", MessageLevel.RIGHTS, false);
-                Main.messageManager.log(
+                this.plugin.getLogger().log(Level.FINER,
                         "Lock access denied to " + event.getPlayer().getName() + " at "
                             + " x:" + event.getClickedBlock().getX()
                             + " y:" + event.getClickedBlock().getY()
                             + " z:" + event.getClickedBlock().getZ()
-                        , MessageLevel.FINER
                 );
                 return;
             }
