@@ -7,12 +7,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import edgruberman.bukkit.accesscontrol.AccountManager;
 import edgruberman.bukkit.messagemanager.MessageLevel;
 import edgruberman.bukkit.messagemanager.MessageManager;
 
 public class Main extends JavaPlugin {
 
     static MessageManager messageManager;
+    static AccountManager security;
 
     private static ConfigurationFile configurationFile;
     private static String trigger = null;
@@ -24,6 +26,7 @@ public class Main extends JavaPlugin {
         this.setLoggingLevel();
 
         Main.messageManager = new MessageManager(this);
+        Main.security = AccountManager.get();
 
         this.configure();
 

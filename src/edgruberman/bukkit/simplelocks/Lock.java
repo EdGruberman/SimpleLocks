@@ -8,8 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import edgruberman.accesscontrol.Principal;
-import edgruberman.bukkit.accesscontrol.AccountManager;
+import edgruberman.bukkit.accesscontrol.Principal;
 
 public class Lock {
 
@@ -179,10 +178,10 @@ public class Lock {
     }
 
     protected boolean setOwner(String owner) {
-        final Principal principal = AccountManager.getAccount(owner);
+        final Principal principal = Main.security.getAccount(owner);
         if (principal == null) return false;
 
-        owner = AccountManager.formatName(principal);
+        owner = Main.security.formatName(principal);
         if (owner.length() > 15) return false;
 
         this.getState().setLine(1, owner);
@@ -190,10 +189,10 @@ public class Lock {
     }
 
     protected boolean addAccess(String name) {
-        final Principal principal = AccountManager.getAccount(name);
+        final Principal principal = Main.security.getAccount(name);
         if (principal == null) return false;
 
-        name = AccountManager.formatName(principal);
+        name = Main.security.formatName(principal);
         if (name.length() > 15) return false;
 
         // Do not add access if name already has direct access. (not in a group)
@@ -228,6 +227,7 @@ public class Lock {
 
     /**
      * Force clients to render sign again to recognize new or removed text.
+     * TODO schedule task to run shortly after block replaced event finishes to update block
      */
     protected void refresh() {
         // Toggle attached direction
@@ -275,12 +275,8 @@ public class Lock {
             // Direct name match.
             if (line.equalsIgnoreCase(name)) return true;
 
-            if (!isDirect) {
-                // Check group membership.
-                if (line.startsWith("[") && line.endsWith("]"))
-                    if (AccountManager.isMemberOf(name, line))
-                        return true;
-            }
+            // Check group membership.
+            if (!isDirect && Main.security.memberOf(name, line)) return true;
         }
 
         return false;
@@ -304,11 +300,8 @@ public class Lock {
         // Direct name match.
         if (owner.equalsIgnoreCase(name)) return true;
 
-        if (!isDirect) {
-            // Check group membership.
-            if (owner.startsWith("[") && owner.endsWith("]"))
-                return AccountManager.isMemberOf(name, owner);
-        }
+        // Check group membership.
+        if (!isDirect && Main.security.memberOf(name, owner)) return true;
 
         return false;
     }
