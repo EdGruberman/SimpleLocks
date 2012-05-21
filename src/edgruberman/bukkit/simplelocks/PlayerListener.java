@@ -35,7 +35,7 @@ public final class PlayerListener implements Listener {
             if (!lock.hasAccess(event.getPlayer())) {
                 // Player does not have access, cancel interaction and notify player.
                 event.setCancelled(true);
-                Main.messageManager.send(event.getPlayer(), "You do not have access to this lock.", MessageLevel.RIGHTS, false);
+                Main.messageManager.send(event.getPlayer(), "You do &cnot have access&_ to this lock", MessageLevel.RIGHTS, false);
                 this.plugin.getLogger().log(Level.FINER,
                         "Lock access denied to " + event.getPlayer().getName() + " at "
                             + " x:" + event.getClickedBlock().getX()
@@ -45,13 +45,10 @@ public final class PlayerListener implements Listener {
                 return;
             }
 
-            if (Lock.isLock(event.getClickedBlock())) {
-                // Player has access and they right clicked on the lock itself so give them information.
-                Main.messageManager.send(event.getPlayer(), "You have access to this lock.", MessageLevel.STATUS, false);
+            // Player has access and they right clicked on the lock itself so give them information.
+            if (Lock.isLock(event.getClickedBlock()))
+                Main.messageManager.send(event.getPlayer(), "You &ahave access&_ to this lock." + (lock.isOwner(event.getPlayer()) ? " &dTo modify: /lock (+|-) <Player>" : ""), MessageLevel.STATUS, false);
 
-                if (lock.isOwner(event.getPlayer()))
-                    Main.messageManager.send(event.getPlayer(), "To modify: /lock (+|-) <Player>", MessageLevel.NOTICE, false);
-            }
             return;
         }
 
@@ -67,7 +64,7 @@ public final class PlayerListener implements Listener {
                 // Check for default owner substitute. (Useful for long names that won't fit on a sign.)
                 final String ownerName = Main.getDefaultOwner(event.getPlayer());
                 if (ownerName.length() > 15) {
-                    Main.messageManager.send(event.getPlayer(), "Unable to create lock; Owner name is too long.", MessageLevel.SEVERE, false);
+                    Main.messageManager.send(event.getPlayer(), "Unable to create lock; Owner name is too long", MessageLevel.SEVERE, false);
                     return;
                 }
 
