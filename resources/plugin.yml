@@ -1,15 +1,12 @@
 name: @NAME@
 description: Locks for chests
-depend: [MessageManager, AccessControl]
+depend: [MessageManager]
 version: @VERSION@
 author: @AUTHOR@
-main: edgruberman.bukkit.simplelocks.Main
+main: @MAIN@
 commands:
-    lock:
+    'simplelocks:lock':
         description: Manage locks
         usage: |
-            /<command> - Show lock status for block targeted
+            /<command> - Show lock status
             /<command> (+|-) <Name> - Add or remove access
-            [Server Operators]
-            /<command> owner <Owner> - Change lock owner
-            /<command> break - Remove the lock

@@ -1,471 +1,208 @@
 package edgruberman.bukkit.simplelocks;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import edgruberman.bukkit.accesscontrol.Principal;
+/**
+ * Sign block that defines access information for the attached block.
+ */
+class Lock {
 
-public class Lock {
-
-    private static String title;
-
-    private Block block = null;
-    private org.bukkit.block.Sign state = null;
+    final Locksmith locksmith;
+    final Sign sign;
 
     /**
-     * Utility interaction for managing information on existing lock.
+     * Existing lock
      *
-     * @param block Existing sign containing lock information.
+     * @param block sign containing lock information
      */
-    protected Lock(final Block block) {
-        this(block, null, null, null);
+    Lock(final Locksmith locksmith, final Block block) {
+        this.locksmith = locksmith;
+        this.sign = (Sign) block.getState();
     }
 
     /**
-     * Create new lock from nothing with only owner access.
+     * Create new lock in-game
      *
-     * @param block Block to place lock at.
-     * @param attachedFace Face adjacent to lockable block.
-     * @param owner Owner of the lock.
+     * @param block changed to wall sign containing lock information
+     * @param attached face adjacent to lockable
+     * @param owner player name or group name
      */
-    protected Lock(final Block block, final BlockFace attachedFace, final String owner) {
-        this(block, attachedFace, owner, null);
-    }
-
-    /**
-     * Take existing sign, convert to lock, and attach to first lockable object behind sign.
-     *
-     * @param block Existing sign containing lock request.
-     * @param owner Owner of the lock.
-     * @param lines All four lines of the sign containing any additional names with access to lock on lines 2, 3, or 4. (Only two will be added maximum.)
-     */
-    protected Lock(final Block block, final String owner, final String[] lines) {
-        this(block, null, owner, lines);
-    }
-
-    private Lock(final Block block, final BlockFace attachedFace, final String owner, final String[] lines) {
-        this.setBlock(block);
-
-        if (owner == null) return;
-
-        BlockFace attachedTo = null;
-        if (attachedFace == null) {
-            attachedTo = this.setAttachedFace();
-        } else {
-            attachedTo = this.setAttachedFace(attachedFace);
-        }
-        if (attachedTo == null) throw new IllegalArgumentException("Unable to find lockable block.");
-
-        this.setOwner(owner);
-
-        if (lines != null && lines.length >= 2) {
-            for (final String line : Arrays.asList(lines).subList(1, Math.min(lines.length, 4))) {
-                this.addAccess(line);
-            }
-        }
-
-        this.setClosed();
-    }
-
-    /**
-     * Sign block associated with lock.
-     *
-     * @return Block with lock information.
-     */
-    protected Block getBlock() {
-        return this.block;
-    }
-
-    /**
-     * Sign block containing lock information
-     *
-     * @param block Block with lock information.
-     */
-    private void setBlock(final Block block) {
-        this.block = block;
-    }
-
-    /**
-     * Find nearest lockable object based on initial orientation.
-     */
-    private BlockFace setAttachedFace() {
-        Block check = null;
-
-        final Block sign = this.getBlock();
-
-        final org.bukkit.material.Sign material = this.getMaterialData();
-
-        BlockFace attachedTo = null;
-        switch (material.getFacing().getOppositeFace()) {
-            case NORTH:
-            case EAST:
-            case SOUTH:
-            case WEST:
-                check = sign.getRelative(material.getFacing().getOppositeFace());
-                if (!check.getType().equals(Material.CHEST)) return null;
-                if (Lock.getLock(check) != null) return null;
-                attachedTo = material.getFacing().getOppositeFace();
-                break;
-            case NORTH_EAST:
-                check = sign.getRelative(BlockFace.NORTH);
-                if (check.getType().equals(Material.CHEST)
-                        && Lock.getLock(check) == null) {
-                    attachedTo = BlockFace.NORTH;
-                    break;
-                }
-                check = sign.getRelative(BlockFace.EAST);
-                if (!check.getType().equals(Material.CHEST)) return null;
-                if (Lock.getLock(check) != null) return null;
-                attachedTo = BlockFace.EAST;
-                break;
-            case SOUTH_EAST:
-                check = sign.getRelative(BlockFace.SOUTH);
-                if (check.getType().equals(Material.CHEST)
-                        && Lock.getLock(check) == null) {
-                    attachedTo = BlockFace.SOUTH;
-                    break;
-                }
-                check = sign.getRelative(BlockFace.EAST);
-                if (!check.getType().equals(Material.CHEST)) return null;
-                if (Lock.getLock(check) != null) return null;
-                attachedTo = BlockFace.EAST;
-                break;
-            case SOUTH_WEST:
-                check = sign.getRelative(BlockFace.SOUTH);
-                if (check.getType().equals(Material.CHEST)
-                        && Lock.getLock(check) == null) {
-                    attachedTo = BlockFace.SOUTH;
-                    break;
-                }
-                check = sign.getRelative(BlockFace.WEST);
-                if (!check.getType().equals(Material.CHEST)) return null;
-                if (Lock.getLock(check) != null) return null;
-                attachedTo = BlockFace.WEST;
-                break;
-            case NORTH_WEST:
-                check = sign.getRelative(BlockFace.NORTH);
-                if (check.getType().equals(Material.CHEST)
-                        && Lock.getLock(check) == null) {
-                    attachedTo = BlockFace.NORTH;
-                    break;
-                }
-                check = sign.getRelative(BlockFace.WEST);
-                if (!check.getType().equals(Material.CHEST)) return null;
-                if (Lock.getLock(check) != null) return null;
-                attachedTo = BlockFace.WEST;
-                break;
-        }
-
-        return this.setAttachedFace(attachedTo);
-    }
-
-    private BlockFace setAttachedFace(final BlockFace attachedFace) {
-        if (attachedFace == null) return null;
-
-        final Block locked = this.getBlock().getRelative(attachedFace);
-        if (Lock.getLock(locked) != null) throw new IllegalArgumentException("Block already locked.");
+    Lock(final Locksmith locksmith, final Block block, final BlockFace attached, final String owner) {
+        this(locksmith, block);
+        final Block locked = this.sign.getBlock().getRelative(attached);
+        if (this.locksmith.isLocked(locked)) throw new IllegalArgumentException("Block already locked");
 
         final org.bukkit.material.Sign material = new org.bukkit.material.Sign(Material.WALL_SIGN);
-        material.setFacingDirection(attachedFace.getOppositeFace());
-        this.getBlock().setTypeIdAndData(material.getItemTypeId(), material.getData(), true);
+        material.setFacingDirection(attached.getOppositeFace());
+        this.sign.setData(material);
 
-        return material.getAttachedFace();
+        this.sign.setLine(0, this.locksmith.getTitle());
+
+        this.setOwner(owner); // Updates block for previous state changes also
     }
 
-    protected boolean setOwner(String owner) {
-        final Principal principal = Main.security.getAccount(owner);
-        if (principal == null) return false;
+    void setOwner(final String name) {
+        if (name.length() < 1 || name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH)
+            throw new IllegalArgumentException("Lock owner name must be between 1 and " + Locksmith.MAXIMUM_SIGN_LINE_LENGTH + " characters; name: " + name);
 
-        owner = Main.security.formatName(principal);
-        if (owner.length() > 15) return false;
-
-        this.getState().setLine(1, owner);
-        return this.getState().update();
+        this.sign.setLine(1, name);
+        this.update();
     }
 
-    protected boolean addAccess(String name) {
-        final Principal principal = Main.security.getAccount(name);
-        if (principal == null) return false;
-
-        name = Main.security.formatName(principal);
-        if (name.length() > 15) return false;
-
-        // Do not add access if name already has direct access. (not in a group)
-        if (this.hasAccess(name, true)) return false;
-
-        // Find first free line to add access to.
-        Integer addTo = null;
-        if (this.getState().getLine(2).length() == 0) addTo = 2;
-        else if (this.getState().getLine(3).length() == 0) addTo = 3;
-
-        // Do not add access if no more room on sign.
-        if (addTo == null) return false;
-
-        this.getState().setLine(addTo, name);
-        return this.getState().update();
+    String getOwner() {
+        return this.sign.getLine(1);
     }
 
-    protected void removeAccess(final String name) {
-        // Do not remove access if name does not already have access
-        if (!this.hasAccess(name, true)) return;
+    /**
+     * Determines if name is explicitly (group memberships ignored) listed as
+     * owner (access ignored)
+     *
+     * @param name player name or partial group name
+     * @return true if name is explicitly declared as owner
+     */
+    boolean isExplicitOwner(final String name) {
+        return this.getOwner().equalsIgnoreCase(name);
+    }
 
-        // Find line with matching name
-        Integer removeFrom = null;
-        if (this.getState().getLine(2) != null && this.getState().getLine(2).equalsIgnoreCase(name)) removeFrom = 2;
-        else if (this.getState().getLine(3) != null && this.getState().getLine(3).equalsIgnoreCase(name)) removeFrom = 3;
+    /**
+     * Determines if player has ownership of lock
+     * (either explicitly or through group membership)
+     *
+     * @return true if player has ownership; false otherwise
+     */
+    boolean isOwner(final Player player) {
+        if (this.isExplicitOwner(player.getName())) return true;
 
-        if (removeFrom == null) return;
+        if (player.isPermissionSet(this.getOwner()) && player.hasPermission(this.getOwner())) return true;
 
-        this.getState().setLine(removeFrom, "");
-        this.getState().update();
+        return false;
+    }
+
+    List<String> getAccess() {
+        final String[] lines = this.sign.getLines();
+        final List<String> access = new ArrayList<String>();
+        if (lines[2].length() > 0) access.add(lines[2]);
+        if (lines[3].length() > 0) access.add(lines[3]);
+        return access;
+    }
+
+    /**
+     * Explicitly (group memberships ignored) grants access to lock
+     *
+     * @param name player name or partial group name
+     */
+    void addAccess(final String name) {
+        if (name.length() < 1 || name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH)
+            throw new IllegalArgumentException("Lock access name must be between 1 and " + Locksmith.MAXIMUM_SIGN_LINE_LENGTH + " characters; name: " + name);
+
+        if (this.hasExplicitAccess(name))
+            throw new IllegalStateException("Lock access has already been granted for name: " + name);
+
+        Integer blank = null;
+        if (this.sign.getLine(2).length() == 0) blank = 2;
+        else if (this.sign.getLine(3).length() == 0) blank = 3;
+        if (blank == null)
+            throw new IllegalStateException("Lock has no blank access lines left to add access for name: " + name);
+
+        this.sign.setLine(blank, name);
+        this.update();
+    }
+
+    /**
+     * Revokes explicit (group memberships ignored) lock access
+     *
+     * @param name player name or partial group name
+     */
+    void removeAccess(final String name) {
+        final String compare = name.toLowerCase();
+
+        Integer direct = null;
+        if (this.sign.getLine(2) != null && this.sign.getLine(2).toLowerCase().equals(compare)) direct = 2;
+        else if (this.sign.getLine(3) != null && this.sign.getLine(3).toLowerCase().equals(compare)) direct = 3;
+        if (direct == null)
+            throw new IllegalStateException("Lock does not grant access to name: " + name);
+
+        this.sign.setLine(direct, "");
+        this.update();
+    }
+
+    /**
+     * Determines if name has been explicitly (group memberships ignored)
+     * assigned as having access (ownership ignored).
+     *
+     * @param name player name or partial group name
+     * @return true if name is explicitly listed as having access; false otherwise
+     */
+    boolean hasExplicitAccess(final String name) {
+        final String compare = name.toLowerCase();
+        for (final String line : this.getAccess())
+            if (line.toLowerCase().equals(compare))
+                return true;
+
+        return false;
+    }
+
+    /**
+     * Determines if player has any type of access
+     * (owner or access, explicit or group)
+     *
+     * @return true if player has access or is owner; false otherwise
+     */
+    boolean hasAccess(final Player player) {
+        if (this.isOwner(player)) return true;
+
+        if (this.hasExplicitAccess(player.getName())) return true;
+
+        for (final String line : this.getAccess())
+            if (player.isPermissionSet(line) && player.hasPermission(line))
+                return true;
+
+        return false;
+    }
+
+    Block getLocked() {
+        final org.bukkit.material.Sign material = (org.bukkit.material.Sign) this.sign.getData();
+        return this.sign.getBlock().getRelative(material.getAttachedFace());
+    }
+
+    String getDescription() {
+        String access = this.getAccess().toString().replaceAll("^\\[|\\]$", "");
+        if (access.length() == 0) access = "(none)";
+
+        final Block locked = this.getLocked();
+
+        String description = "Owner: " + this.getOwner();
+        description += "; Access: " + access;
+        description += "; " + locked.getType().toString() + " at x: " + locked.getX() + " y: " + locked.getY() + " z: " + locked.getZ();
+
+        return description;
+    }
+
+    void update() {
+        if (!this.sign.update())
+            throw new IllegalStateException("Unable to update sign block; State was changed external to plugin");
     }
 
     /**
      * Force clients to render sign again to recognize new or removed text.
      * TODO schedule task to run shortly after block replaced event finishes to update block
+     * TODO make better
      */
-    protected void refresh() {
+    void refresh() {
+        final org.bukkit.material.Sign material = (org.bukkit.material.Sign) this.sign.getData();
+
         // Toggle attached direction
-        final org.bukkit.material.Sign material = new org.bukkit.material.Sign(this.getBlock().getType());
-        material.setData(this.getMaterialData().getData());
-
         material.setFacingDirection(material.getAttachedFace());
-        this.getBlock().setData(material.getData());
-
+        this.sign.update(true);
         material.setFacingDirection(material.getAttachedFace());
-        this.getBlock().setData(material.getData());
+        this.sign.update(true);
     }
 
-    private void setClosed() {
-        this.getState().setLine(0, Lock.title);
-        this.getState().update();
-    }
-
-    /**
-     * This function exists because raising exceptions confuses me.
-     *
-     * @return true if this lock object was successful at creating a lock in the world.
-     */
-    protected boolean isLock() {
-        return Lock.isLock(this.getBlock());
-    }
-
-    protected boolean hasAccess(final Player player) {
-        return this.hasAccess(player.getName());
-    }
-
-    protected boolean hasAccess(final String name) {
-        return this.hasAccess(name, false);
-    }
-
-    protected boolean hasAccess(final String name, final boolean isDirect) {
-        if (this.isOwner(name, isDirect)) return true;
-
-        final List<String> access = Arrays.asList(this.getState().getLines())
-            .subList(2, Math.min(this.getState().getLines().length, 4));
-
-        for (String line : access) {
-            line = line.trim();
-
-            // Direct name match.
-            if (line.equalsIgnoreCase(name)) return true;
-
-            // Check group membership.
-            if (!isDirect && Main.security.memberOf(name, line)) return true;
-        }
-
-        return false;
-    }
-
-    protected String getOwner() {
-        return this.getState().getLine(1);
-    }
-
-    protected boolean isOwner(final Player player) {
-        return this.isOwner(player.getName());
-    }
-
-    protected boolean isOwner(final String name) {
-        return this.isOwner(name, false);
-    }
-
-    protected boolean isOwner(final String name, final boolean isDirect) {
-        final String owner = this.getState().getLine(1).trim();
-
-        // Direct name match.
-        if (owner.equalsIgnoreCase(name)) return true;
-
-        // Check group membership.
-        if (!isDirect && Main.security.memberOf(name, owner)) return true;
-
-        return false;
-    }
-
-    protected String getDescription() {
-        final Block locked = this.getBlock().getRelative(this.getMaterialData().getAttachedFace());
-
-        String description = "---- Lock";
-        description += "\nOwner: " + this.getOwner();
-        description += "\nAccess: " + this.getState().getLine(2) + " " + this.getState().getLine(3);
-        description += "\n" + locked.getType().toString() + " at x: " + locked.getX() + " y: " + locked.getY() + " z: " + locked.getZ();
-
-        return description;
-    }
-
-    /**
-     * Utility function to access sign text easier without causing NPE
-     *
-     * @return the sign's block state
-     */
-    protected org.bukkit.block.Sign getState() {
-        if (this.getBlock() == null) return null;
-
-        if (this.state == null) this.state = (org.bukkit.block.Sign) this.getBlock().getState();
-        return this.state;
-    }
-
-    /**
-     * Utility function to manage direction of sign easier.
-     *
-     * @return the sign's material data
-     */
-    private org.bukkit.material.Sign getMaterialData() {
-        if (this.getBlock() == null) return null;
-
-        final org.bukkit.material.Sign material = new org.bukkit.material.Sign(this.getBlock().getType());
-        material.setData(this.getBlock().getData());
-        return material;
-    }
-
-    /**
-     * Configure the text that is required on the first line of the lock sign.
-     *
-     * @param title Text that designates a lock.
-     */
-    protected static void setTitle(final String title) {
-        if (title == null || title.length() > 15)
-            throw new IllegalArgumentException("Title must be no more than 15 characters.");
-
-        Lock.title = title;
-    }
-
-    /**
-     * The text on the first line of the sign that indicates it is a lock.
-     *
-     * @return Text that designates a lock.
-     */
-    protected static String getTitle() {
-        return Lock.title;
-    }
-
-    /**
-     * Find lock for block, which could be the block itself.
-     *
-     * @param block Block to check for lock on.
-     * @return Lock associated with block.
-     */
-    protected static Lock getLock(final Block block) {
-        if (Lock.isLock(block)) return new Lock(block);
-
-        return Lock.getChestLock(block);
-    }
-
-    /**
-     * Indicates if block is a lock for any object.
-     *
-     * @param block Block to check if it is a lock.
-     * @return true if block is a lock.
-     */
-    protected static boolean isLock(final Block block) {
-        return Lock.isLock(block, null);
-    }
-
-    /**
-     * Indicates if block is a lock.
-     *
-     * @param block Block to check if it is a lock.
-     * @param attachedTo Face connected to locked object. Set to null to determine if block is a lock for anything.
-     * @return true if block is a lock attached as specified.
-     */
-    private static boolean isLock(final Block block, final BlockFace attachedTo) {
-        // Locks are always wall signs.
-        if (!block.getType().equals(Material.WALL_SIGN))
-            return false;
-
-        final org.bukkit.material.Sign material = new org.bukkit.material.Sign(block.getType());
-        if (attachedTo != null) {
-            // Locks must be directly attached to locked object.
-            material.setData(block.getData());
-            if (!material.getAttachedFace().equals(attachedTo))
-                return false;
-        }
-
-        // First line of sign must contain standard lock title.
-        if (!((org.bukkit.block.Sign) block.getState()).getLine(0).equals(Lock.title))
-            return false;
-
-        return true;
-    }
-
-    /**
-     * Returns the lock associated with the chest.
-     *
-     * @param chest Chest block (single or either side of a double).
-     * @return Lock associated to chest.
-     */
-    private static Lock getChestLock(final Block chest) {
-        return Lock.getChestLock(chest, false);
-    }
-
-    /**
-     * Returns the lock associated with the chest.
-     *
-     * @param chest Chest block to check for associated lock.
-     * @param otherHalf true if chest is the second half of a chest.
-     * @return Lock associated to chest.
-     */
-    private static Lock getChestLock(final Block chest, final boolean otherHalf) {
-        if (!chest.getType().equals(Material.CHEST)) return null;
-
-        Block block;
-
-        block = chest.getRelative(BlockFace.NORTH);
-        if (Lock.isLock(block, BlockFace.NORTH.getOppositeFace())) return new Lock(block);
-
-        block = chest.getRelative(BlockFace.EAST);
-        if (Lock.isLock(block, BlockFace.EAST.getOppositeFace())) return new Lock(block);
-
-        block = chest.getRelative(BlockFace.SOUTH);
-        if (Lock.isLock(block, BlockFace.SOUTH.getOppositeFace())) return new Lock(block);
-
-        block = chest.getRelative(BlockFace.WEST);
-        if (Lock.isLock(block, BlockFace.WEST.getOppositeFace())) return new Lock(block);
-
-        // If this is the second half of a chest don't look further.
-        if (otherHalf) return null;
-
-        // Check if second half of chest exists and has a lock.
-        block = chest.getRelative(BlockFace.NORTH);
-        if (block.getType().equals(Material.CHEST))
-            return Lock.getChestLock(block, true);
-
-        block = chest.getRelative(BlockFace.EAST);
-        if (block.getType().equals(Material.CHEST))
-            return Lock.getChestLock(block, true);
-
-        block = chest.getRelative(BlockFace.SOUTH);
-        if (block.getType().equals(Material.CHEST))
-            return Lock.getChestLock(block, true);
-
-        block = chest.getRelative(BlockFace.WEST);
-        if (block.getType().equals(Material.CHEST))
-            return Lock.getChestLock(block, true);
-
-        return null;
-    }
 }
