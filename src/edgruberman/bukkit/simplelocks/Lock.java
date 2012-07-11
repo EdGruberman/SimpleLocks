@@ -35,13 +35,15 @@ class Lock {
      * @param owner player name or group name
      */
     Lock(final Locksmith locksmith, final Block block, final BlockFace attached, final String owner) {
-        this(locksmith, block);
-        final Block locked = this.sign.getBlock().getRelative(attached);
+        this.locksmith = locksmith;
+        final Block locked = block.getRelative(attached);
         if (this.locksmith.isLocked(locked)) throw new IllegalArgumentException("Block already locked");
 
         final org.bukkit.material.Sign material = new org.bukkit.material.Sign(Material.WALL_SIGN);
         material.setFacingDirection(attached.getOppositeFace());
-        this.sign.setData(material);
+        block.setTypeIdAndData(material.getItemTypeId(), material.getData(), true);
+        //this.sign.setData(material);
+        this.sign = (Sign) block.getState();
 
         this.sign.setLine(0, this.locksmith.getTitle());
 
