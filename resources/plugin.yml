@@ -1,12 +1,62 @@
 name: @NAME@
 description: Locks for chests
-depend: [MessageManager]
+softdepend: [MessageManager]
 version: @VERSION@
 author: @AUTHOR@
 main: @MAIN@
 commands:
-    'simplelocks:lock':
-        description: Manage locks
-        usage: |
-            /<command> - Show lock status
-            /<command> (+|-) <Name> - Add or remove access
+    'simplelocks:lock.info':
+        aliases: [lock, lock.info]
+        description: Show lock information for targeted block
+        permission: simplelocks.lock.info
+        usage: /<command>
+    'simplelocks:lock.grant':
+        aliases: [lock+, lock.grant]
+        description: Grant explicit lock access to targeted block * Lock owner only
+        permission: simplelocks.lock.grant
+        usage: /<command> <Name>
+    'simplelocks:lock.revoke':
+        aliases: [lock-, lock.revoke]
+        description: Revoke explicit lock access from targeted block * Lock owner only
+        permission: simplelocks.lock.revoke
+        usage: /<command> <Name>
+    'simplelocks:lock.owner':
+        aliases: [lock.owner]
+        description: Change lock owner for targeted block
+        permission: simplelocks.lock.owner
+        usage: /<command> <Name>
+    'simplelocks:lock.break':
+        aliases: [lock.break]
+        description: Remove lock from targeted block
+        permission: simplelocks.lock.break
+        usage: /<command>
+    'simplelocks:reload':
+        description: Reload plugin configuration
+        permission: simplelocks.reload
+        usage: /<command>
+permissions:
+    simplelocks.admin:
+        description: Can use administrative features of SimpleLocks plugin
+        default: op
+        children:
+            simplelocks.lock.owner: true
+            simplelocks.lock.break: true
+            simplelocks.reload: true
+    simplelocks.lock.info:
+        description: Can use lock.info command on any lock
+        default: true
+    simplelocks.lock.grant:
+        description: Can use lock.grant command if lock owner
+        default: true
+    simplelocks.lock.revoke:
+        description: Can use lock.revoke command if lock owner
+        default: true
+    simplelocks.lock.owner:
+        description: Can use lock.owner command on any lock
+        default: false
+    simplelocks.lock.break:
+        description: Can use lock.break command on any lock
+        default: false
+    simplelocks.reload:
+        description: Can use reload command
+        default: false

@@ -12,10 +12,10 @@ import org.bukkit.entity.Player;
 /**
  * Sign block that defines access information for the attached block.
  */
-class Lock {
+public class Lock {
 
-    final Locksmith locksmith;
-    final Sign sign;
+    public final Locksmith locksmith;
+    public final Sign sign;
 
     /**
      * Existing lock
@@ -45,20 +45,17 @@ class Lock {
         //this.sign.setData(material);
         this.sign = (Sign) block.getState();
 
-        this.sign.setLine(0, this.locksmith.getTitle());
+        this.sign.setLine(0, this.locksmith.title);
 
         this.setOwner(owner); // Updates block for previous state changes also
     }
 
-    void setOwner(final String name) {
-        if (name.length() < 1 || name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH)
-            throw new IllegalArgumentException("Lock owner name must be between 1 and " + Locksmith.MAXIMUM_SIGN_LINE_LENGTH + " characters; name: " + name);
-
+    public void setOwner(final String name) {
         this.sign.setLine(1, name);
         this.update();
     }
 
-    String getOwner() {
+    public String getOwner() {
         return this.sign.getLine(1);
     }
 
@@ -79,7 +76,7 @@ class Lock {
      *
      * @return true if player has ownership; false otherwise
      */
-    boolean isOwner(final Player player) {
+    public boolean isOwner(final Player player) {
         if (this.isExplicitOwner(player.getName())) return true;
 
         if (player.isPermissionSet(this.getOwner()) && player.hasPermission(this.getOwner())) return true;
@@ -87,7 +84,7 @@ class Lock {
         return false;
     }
 
-    List<String> getAccess() {
+    public List<String> getAccess() {
         final String[] lines = this.sign.getLines();
         final List<String> access = new ArrayList<String>();
         if (lines[2].length() > 0) access.add(lines[2]);
@@ -100,7 +97,7 @@ class Lock {
      *
      * @param name player name or partial group name
      */
-    void addAccess(final String name) {
+    public void addAccess(final String name) {
         if (name.length() < 1 || name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH)
             throw new IllegalArgumentException("Lock access name must be between 1 and " + Locksmith.MAXIMUM_SIGN_LINE_LENGTH + " characters; name: " + name);
 
@@ -122,7 +119,7 @@ class Lock {
      *
      * @param name player name or partial group name
      */
-    void removeAccess(final String name) {
+    public void removeAccess(final String name) {
         final String compare = name.toLowerCase();
 
         Integer direct = null;
@@ -142,7 +139,7 @@ class Lock {
      * @param name player name or partial group name
      * @return true if name is explicitly listed as having access; false otherwise
      */
-    boolean hasExplicitAccess(final String name) {
+    public boolean hasExplicitAccess(final String name) {
         final String compare = name.toLowerCase();
         for (final String line : this.getAccess())
             if (line.toLowerCase().equals(compare))
@@ -157,7 +154,7 @@ class Lock {
      *
      * @return true if player has access or is owner; false otherwise
      */
-    boolean hasAccess(final Player player) {
+    public boolean hasAccess(final Player player) {
         if (this.isOwner(player)) return true;
 
         if (this.hasExplicitAccess(player.getName())) return true;
@@ -169,25 +166,12 @@ class Lock {
         return false;
     }
 
-    Block getLocked() {
+    public Block getLocked() {
         final org.bukkit.material.Sign material = (org.bukkit.material.Sign) this.sign.getData();
         return this.sign.getBlock().getRelative(material.getAttachedFace());
     }
 
-    String getDescription() {
-        String access = this.getAccess().toString().replaceAll("^\\[|\\]$", "");
-        if (access.length() == 0) access = "(none)";
-
-        final Block locked = this.getLocked();
-
-        String description = "Owner: " + this.getOwner();
-        description += "; Access: " + access;
-        description += "; " + locked.getType().toString() + " at x: " + locked.getX() + " y: " + locked.getY() + " z: " + locked.getZ();
-
-        return description;
-    }
-
-    void update() {
+    public void update() {
         if (!this.sign.update())
             throw new IllegalStateException("Unable to update sign block; State was changed external to plugin");
     }
@@ -197,7 +181,7 @@ class Lock {
      * TODO schedule task to run shortly after block replaced event finishes to update block
      * TODO make better
      */
-    void refresh() {
+    public void refresh() {
         final org.bukkit.material.Sign material = (org.bukkit.material.Sign) this.sign.getData();
 
         // Toggle attached direction

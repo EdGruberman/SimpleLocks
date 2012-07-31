@@ -1,2 +1,23 @@
-﻿title: '§1++ LOCKED ++'
 logLevel: INFO
+title: '§1++ LOCKED ++'
+messages:
+    info: '-> Lock: §nOwner§r=%2$s  §nAccess§r=%3$s  §8(%4$s at x:%5$d y:%6$d z:%7$d)' # 2 = Owner, 3 = Access, 4 = Material, 5 = X Coordinate, 6 = Y Coordinate, 7 = Z coordinate
+    access: '-> You have lock §aaccess'
+    owner: '-> You are lock §aowner§r    Modify: §d/lock(+|-) §o<Name>'
+    denied: '-> Lock access §cdenied'
+    createNameTooLong: '-> Lock §ccreation denied§r; Owner name too long'
+    removeDenied: '-> Lock §cremoval denied§r; Owner required: %2$s' # 2 = Owner
+    grantAlready: '-> Lock access §ealready explicitly granted§r to %2$s' # 2 = <Name>
+    grantFull: '-> Lock §eunable to grant access§r (Lock access full)'
+    grantSuccess: '-> Lock §aexplicit access granted§r to %2$s' # 2 = <Name>
+    revokeMissing: '-> Lock does §enot explicitly grant access§r to %2$s' # 2 = <Name>
+    revokeSuccess: '-> Lock §aexplicit access revoked§r from %2$s' # 2 = <Name>
+    ownerSuccess: '-> Lock §aowner§r changed to %2$s' # 2 = Owner
+    nameTooLong: '-> Lock name must be §c15 characters§r or less'
+    break: '-> Lock §abroken'
+    reload: '-> %2$s plugin configuration §areloaded' # 2 = Plugin
+    requiresOwner: '-> Command cancelled when §cnot lock owner§r: %2$s' # 2 = Owner
+    requiresPlayer: '-> Command cancelled when §cnot in-game player'
+    requiresLock: '-> §eNo lock§r identified'
+    requiresParameter: '-> Required §cparameter missing§r: %2$s' # 2 = Parameter
+version: @VERSION@

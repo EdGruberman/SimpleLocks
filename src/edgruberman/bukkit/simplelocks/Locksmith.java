@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -18,40 +17,21 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.Plugin;
 
-import edgruberman.bukkit.messagemanager.MessageLevel;
+public class Locksmith implements Listener {
 
-class Locksmith implements Listener {
-
-    static int MAXIMUM_SIGN_LINE_LENGTH = 15;
+    public static int MAXIMUM_SIGN_LINE_LENGTH = 15;
 
     Plugin plugin;
-    ConfigurationSection defaultOwners = new MemoryConfiguration();
-    private String title = null;
-
-    Locksmith(final Plugin plugin) {
-        this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
 
     /**
      * The text on the first line of the sign that indicates it is a lock
-     *
-     * @return text that designates a lock
      */
-    String getTitle() {
-        return this.title;
-    }
+    public String title;
 
-    /**
-     * Configure the text that is required on the first line of the lock sign
-     *
-     * @param title text that designates a lock
-     */
-    void setTitle(final String title) {
-        if (title.length() < 1 || title.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH)
-            throw new IllegalArgumentException("Title must be between 1 and " + Locksmith.MAXIMUM_SIGN_LINE_LENGTH + " characters");
-
+    Locksmith(final Plugin plugin, final String title) {
+        this.plugin = plugin;
         this.title = title;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**
@@ -114,7 +94,7 @@ class Locksmith implements Listener {
      * @param block block to check
      * @return Lock associated with block; null if none
      */
-    Lock findLock(final Block block) {
+    public Lock findLock(final Block block) {
         if (this.isLock(block)) return new Lock(this, block);
 
         final Block lock = this.findChestLock(block);
@@ -158,55 +138,58 @@ class Locksmith implements Listener {
     }
 
     String getDefaultOwner(final Player player) {
-        return this.defaultOwners.getString(player.getName(), player.getName());
+        final ConfigurationSection defaultOwners = this.plugin.getConfig().getConfigurationSection("defaultOwners");
+        if (defaultOwners == null) return player.getName();
+
+        return defaultOwners.getString(player.getName(), player.getName());
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onPlayerInteract(final PlayerInteractEvent event) {
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
+    public void onPlayerInteract(final PlayerInteractEvent interaction) {
+        if (!interaction.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        final Lock lock = this.findLock(event.getClickedBlock());
+        final Lock lock = this.findLock(interaction.getClickedBlock());
         if (lock != null) {
             // Existing lock found
 
-            if (!lock.hasAccess(event.getPlayer())) {
+            if (!lock.hasAccess(interaction.getPlayer())) {
                 // Player does not have access, cancel interaction and notify player
-                event.setCancelled(true);
-                Main.messageManager.send(event.getPlayer(), "You do &cnot have access&_ to this lock", MessageLevel.RIGHTS, false);
-                this.plugin.getLogger().finer(
-                        "Lock access denied to " + event.getPlayer().getName() + " at "
-                            + " x:" + event.getClickedBlock().getX()
-                            + " y:" + event.getClickedBlock().getY()
-                            + " z:" + event.getClickedBlock().getZ()
+                interaction.setCancelled(true);
+                Main.messenger.tell(interaction.getPlayer(), "denied");
+                this.plugin.getLogger().finest(
+                        "Lock access denied to " + interaction.getPlayer().getName() + " at "
+                            + " x:" + interaction.getClickedBlock().getX()
+                            + " y:" + interaction.getClickedBlock().getY()
+                            + " z:" + interaction.getClickedBlock().getZ()
                 );
                 return;
             }
 
             // Player has access and they right clicked on the lock itself so give them information
-            if (this.isLock(event.getClickedBlock()))
-                Main.messageManager.send(event.getPlayer(), "You &ahave access&_ to this lock." + (lock.isOwner(event.getPlayer()) ? " &dTo modify: /lock (+|-) <Player>" : ""), MessageLevel.STATUS, false);
+            if (this.isLock(interaction.getClickedBlock()))
+                Main.messenger.tell(interaction.getPlayer(), (lock.isOwner(interaction.getPlayer()) ? "owner" : "access"));
 
             return;
         }
 
         // No existing lock, check to see if player is requesting a lock be created
-        if (event.getClickedBlock().getType().equals(Material.CHEST)) {
-            if (event.getMaterial().equals(Material.SIGN)
-                    && event.getClickedBlock().getRelative(event.getBlockFace()).getType().equals(Material.AIR)
-                    && !event.getBlockFace().equals(BlockFace.UP) && !event.getBlockFace().equals(BlockFace.DOWN)) {
+        if (interaction.getClickedBlock().getType().equals(Material.CHEST)) {
+            if (interaction.getMaterial().equals(Material.SIGN)
+                    && interaction.getClickedBlock().getRelative(interaction.getBlockFace()).getType().equals(Material.AIR)
+                    && !interaction.getBlockFace().equals(BlockFace.UP) && !interaction.getBlockFace().equals(BlockFace.DOWN)) {
 
                 // Right click on a chest with a sign to create lock automatically
-                event.setUseInteractedBlock(Result.DENY); // Don't open the chest
+                interaction.setUseInteractedBlock(Result.DENY); // Don't open the chest
 
                 // Check for default owner substitute (Long names won't fit on a sign)
-                final String ownerName = this.getDefaultOwner(event.getPlayer());
+                final String ownerName = this.getDefaultOwner(interaction.getPlayer());
                 if (ownerName.length() > 15) {
-                    Main.messageManager.send(event.getPlayer(), "Unable to create lock; Owner name is too long", MessageLevel.SEVERE, false);
+                    Main.messenger.tell(interaction.getPlayer(), "createNameTooLong");
                     return;
                 }
 
-                event.getPlayer().setItemInHand(null);
-                this.createLock(event.getClickedBlock().getRelative(event.getBlockFace()), event.getBlockFace().getOppositeFace(), ownerName);
+                interaction.getPlayer().setItemInHand(null);
+                this.createLock(interaction.getClickedBlock().getRelative(interaction.getBlockFace()), interaction.getBlockFace().getOppositeFace(), ownerName);
             }
         }
     }
@@ -215,34 +198,34 @@ class Locksmith implements Listener {
      * Cancel block break if lock/locked and not owner
      */
     @EventHandler(ignoreCancelled = true)
-    public void onBlockBreak(final BlockBreakEvent event) {
-        final Lock lock = this.findLock(event.getBlock());
+    public void onBlockBreak(final BlockBreakEvent broken) {
+        final Lock lock = this.findLock(broken.getBlock());
         if (lock == null) return;
 
         // Allow lock owner to break lock
-        if (lock.isOwner(event.getPlayer())) return;
+        if (lock.isOwner(broken.getPlayer())) return;
 
-        event.setCancelled(true);
-        Main.messageManager.send(event.getPlayer(), "You can not remove a lock unless you are the owner", MessageLevel.RIGHTS, false);
-        this.plugin.getLogger().finer(
+        broken.setCancelled(true);
+        Main.messenger.tell(broken.getPlayer(), "removeDenied", lock.getOwner());
+        this.plugin.getLogger().finest(
                 "Cancelled block break to protect lock at"
-                    + " x:" + event.getBlock().getX()
-                    + " y:" + event.getBlock().getY()
-                    + " z:" + event.getBlock().getZ()
+                    + " x:" + broken.getBlock().getX()
+                    + " y:" + broken.getBlock().getY()
+                    + " z:" + broken.getBlock().getZ()
         );
 
-        lock.refresh(); // TODO add timed refresh so it updates after event processes/reverts
+        lock.refresh(); // TODO ? add timed refresh so it updates after event processes/reverts
     }
 
     /**
      * Cancel explosion if any affected block is a lock or is locked
      */
     @EventHandler(ignoreCancelled = true)
-    public void onEntityExplode(final EntityExplodeEvent event) {
-        for (final Block block : event.blockList()) {
+    public void onEntityExplode(final EntityExplodeEvent explosion) {
+        for (final Block block : explosion.blockList()) {
             if (this.isLock(block) || this.isLocked(block)) {
-                event.setCancelled(true);
-                this.plugin.getLogger().finer("Cancelling explosion to protect lock at" + " x:" + block.getX() + " y:" + block.getY() + " z:" + block.getZ());
+                explosion.setCancelled(true);
+                this.plugin.getLogger().finest("Cancelling explosion to protect lock at" + " x:" + block.getX() + " y:" + block.getY() + " z:" + block.getZ());
                 break;
             }
         }
