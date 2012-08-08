@@ -1,6 +1,7 @@
 package edgruberman.bukkit.simplelocks;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -21,12 +22,10 @@ public class Locksmith implements Listener {
 
     public static int MAXIMUM_SIGN_LINE_LENGTH = 15;
 
-    Plugin plugin;
-
-    /**
-     * The text on the first line of the sign that indicates it is a lock
-     */
-    public String title;
+    /** text on the first line of the sign that indicates it is a lock */
+    public final String title;
+    
+    private final Plugin plugin;
 
     Locksmith(final Plugin plugin, final String title) {
         this.plugin = plugin;
@@ -194,9 +193,7 @@ public class Locksmith implements Listener {
         }
     }
 
-    /**
-     * Cancel block break if lock/locked and not owner
-     */
+    /** cancel block break if lock/locked and not owner */
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent broken) {
         final Lock lock = this.findLock(broken.getBlock());
@@ -217,16 +214,15 @@ public class Locksmith implements Listener {
         lock.refresh(); // TODO ? add timed refresh so it updates after event processes/reverts
     }
 
-    /**
-     * Cancel explosion if any affected block is a lock or is locked
-     */
+    /** remove any locks or locked blocks */
     @EventHandler(ignoreCancelled = true)
     public void onEntityExplode(final EntityExplodeEvent explosion) {
-        for (final Block block : explosion.blockList()) {
+        final Iterator<Block> affected = explosion.blockList().iterator();
+        while (affected.hasNext()) {
+            final Block block = affected.next();
             if (this.isLock(block) || this.isLocked(block)) {
-                explosion.setCancelled(true);
-                this.plugin.getLogger().finest("Cancelling explosion to protect lock at" + " x:" + block.getX() + " y:" + block.getY() + " z:" + block.getZ());
-                break;
+                affected.remove();
+                this.plugin.getLogger().finest("Protected lock/locked block from explosion at" + " x:" + block.getX() + " y:" + block.getY() + " z:" + block.getZ());
             }
         }
     }
