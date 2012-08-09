@@ -24,7 +24,7 @@ public class Locksmith implements Listener {
 
     /** text on the first line of the sign that indicates it is a lock */
     public final String title;
-    
+
     private final Plugin plugin;
 
     Locksmith(final Plugin plugin, final String title) {
@@ -154,7 +154,7 @@ public class Locksmith implements Listener {
             if (!lock.hasAccess(interaction.getPlayer())) {
                 // Player does not have access, cancel interaction and notify player
                 interaction.setCancelled(true);
-                Main.messenger.tell(interaction.getPlayer(), "denied");
+                Main.courier.send(interaction.getPlayer(), "denied");
                 this.plugin.getLogger().finest(
                         "Lock access denied to " + interaction.getPlayer().getName() + " at "
                             + " x:" + interaction.getClickedBlock().getX()
@@ -166,7 +166,7 @@ public class Locksmith implements Listener {
 
             // Player has access and they right clicked on the lock itself so give them information
             if (this.isLock(interaction.getClickedBlock()))
-                Main.messenger.tell(interaction.getPlayer(), (lock.isOwner(interaction.getPlayer()) ? "owner" : "access"));
+                Main.courier.send(interaction.getPlayer(), (lock.isOwner(interaction.getPlayer()) ? "owner" : "access"));
 
             return;
         }
@@ -183,7 +183,7 @@ public class Locksmith implements Listener {
                 // Check for default owner substitute (Long names won't fit on a sign)
                 final String ownerName = this.getDefaultOwner(interaction.getPlayer());
                 if (ownerName.length() > 15) {
-                    Main.messenger.tell(interaction.getPlayer(), "createNameTooLong");
+                    Main.courier.send(interaction.getPlayer(), "createNameTooLong");
                     return;
                 }
 
@@ -203,7 +203,7 @@ public class Locksmith implements Listener {
         if (lock.isOwner(broken.getPlayer())) return;
 
         broken.setCancelled(true);
-        Main.messenger.tell(broken.getPlayer(), "removeDenied", lock.getOwner());
+        Main.courier.send(broken.getPlayer(), "removeDenied", lock.getOwner());
         this.plugin.getLogger().finest(
                 "Cancelled block break to protect lock at"
                     + " x:" + broken.getBlock().getX()

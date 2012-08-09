@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import edgruberman.bukkit.messaging.couriers.ConfigurationCourier;
+import edgruberman.bukkit.messaging.couriers.TimestampedConfigurationCourier;
 import edgruberman.bukkit.simplelocks.commands.LockBreak;
 import edgruberman.bukkit.simplelocks.commands.LockGrant;
 import edgruberman.bukkit.simplelocks.commands.LockInfo;
@@ -25,7 +27,7 @@ import edgruberman.bukkit.simplelocks.commands.Reload;
 
 public class Main extends JavaPlugin {
 
-    public static Messenger messenger;
+    public static ConfigurationCourier courier;
 
     private static final Version MINIMUM_CONFIGURATION = new Version("2.0.0");
 
@@ -35,7 +37,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         this.reloadConfig();
 
-        Main.messenger = Messenger.load(this, "messages");
+        Main.courier =new TimestampedConfigurationCourier(this, "messages");
 
         final String title = this.getConfig().getString("title");
         this.getLogger().config("Lock title: " + title);

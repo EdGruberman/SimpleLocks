@@ -24,21 +24,21 @@ public class LockBreak implements CommandExecutor {
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (!(sender instanceof Player)) {
-            Main.messenger.tell(sender, "requiresPlayer");
+            Main.courier.send(sender, "requiresPlayer");
             return true;
         }
 
         final Player player = (Player) sender;
         final Lock lock = this.locksmith.findLock(player.getTargetBlock((HashSet<Byte>) null, 4));
         if (lock == null) {
-            Main.messenger.tell(sender, "requiresLock");
+            Main.courier.send(sender, "requiresLock");
             return true;
         }
 
         lock.sign.setType(Material.AIR);
         lock.sign.update(true);
         lock.sign.getWorld().dropItemNaturally(lock.sign.getLocation(), new ItemStack(Material.SIGN, 1));
-        Main.messenger.tell(sender, "break");
+        Main.courier.send(sender, "break");
         return true;
     }
 

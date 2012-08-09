@@ -23,20 +23,20 @@ public class LockInfo implements CommandExecutor {
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (!(sender instanceof Player)) {
-            Main.messenger.tell(sender, "requiresPlayer");
+            Main.courier.send(sender, "requiresPlayer");
             return true;
         }
 
         final Player player = (Player) sender;
         final Lock lock = this.locksmith.findLock(player.getTargetBlock((HashSet<Byte>) null, 4));
         if (lock == null) {
-            Main.messenger.tell(sender, "requiresLock");
+            Main.courier.send(sender, "requiresLock");
             return true;
         }
 
         final Block locked = lock.getLocked();
-        Main.messenger.tell(sender, "info", lock.getOwner(), lock.getAccess().toString().replaceAll("^\\[|\\]$", ""), locked.getType().toString(), locked.getX(), locked.getY(), locked.getZ());
-        Main.messenger.tell(sender, (!lock.hasAccess(player) ? "denied" : (lock.isOwner(player) ? "owner" : "access")));
+        Main.courier.send(sender, "info", lock.getOwner(), lock.getAccess().toString().replaceAll("^\\[|\\]$", ""), locked.getType().toString(), locked.getX(), locked.getY(), locked.getZ());
+        Main.courier.send(sender, (!lock.hasAccess(player) ? "denied" : (lock.isOwner(player) ? "owner" : "access")));
         return true;
     }
 

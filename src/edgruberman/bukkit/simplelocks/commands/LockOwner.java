@@ -22,29 +22,29 @@ public class LockOwner implements CommandExecutor {
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (!(sender instanceof Player)) {
-            Main.messenger.tell(sender, "requiresPlayer");
+            Main.courier.send(sender, "requiresPlayer");
             return true;
         }
 
         if (args.length < 1) {
-            Main.messenger.tell(sender, "requiresParameter", "<Name>");
+            Main.courier.send(sender, "requiresParameter", "<Name>");
             return false;
         }
 
         if (args[0].length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.messenger.tell(sender, "nameTooLong");
+            Main.courier.send(sender, "nameTooLong");
             return false;
         }
 
         final Player player = (Player) sender;
         final Lock lock = this.locksmith.findLock(player.getTargetBlock((HashSet<Byte>) null, 4));
         if (lock == null) {
-            Main.messenger.tell(sender, "requiresLock");
+            Main.courier.send(sender, "requiresLock");
             return true;
         }
 
         lock.setOwner(args[0]);
-        Main.messenger.tell(sender, "ownerSuccess", args[0]);
+        Main.courier.send(sender, "ownerSuccess", args[0]);
         lock.refresh();
         return true;
     }
