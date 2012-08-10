@@ -16,14 +16,14 @@ import java.util.logging.Level;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import edgruberman.bukkit.messaging.couriers.ConfigurationCourier;
-import edgruberman.bukkit.messaging.couriers.TimestampedConfigurationCourier;
 import edgruberman.bukkit.simplelocks.commands.LockBreak;
 import edgruberman.bukkit.simplelocks.commands.LockGrant;
 import edgruberman.bukkit.simplelocks.commands.LockInfo;
 import edgruberman.bukkit.simplelocks.commands.LockOwner;
 import edgruberman.bukkit.simplelocks.commands.LockRevoke;
 import edgruberman.bukkit.simplelocks.commands.Reload;
+import edgruberman.bukkit.simplelocks.messaging.couriers.ConfigurationCourier;
+import edgruberman.bukkit.simplelocks.messaging.couriers.TimestampedConfigurationCourier;
 
 public class Main extends JavaPlugin {
 

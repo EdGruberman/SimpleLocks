@@ -1,14 +1,14 @@
-package edgruberman.bukkit.messaging;
+package edgruberman.bukkit.simplelocks.messaging;
 
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import edgruberman.bukkit.messaging.messages.Confirmation;
-import edgruberman.bukkit.messaging.recipients.PermissionSubscribers;
-import edgruberman.bukkit.messaging.recipients.Sender;
-import edgruberman.bukkit.messaging.recipients.ServerPlayers;
-import edgruberman.bukkit.messaging.recipients.WorldPlayers;
+import edgruberman.bukkit.simplelocks.messaging.messages.Confirmation;
+import edgruberman.bukkit.simplelocks.messaging.recipients.PermissionSubscribers;
+import edgruberman.bukkit.simplelocks.messaging.recipients.Sender;
+import edgruberman.bukkit.simplelocks.messaging.recipients.ServerPlayers;
+import edgruberman.bukkit.simplelocks.messaging.recipients.WorldPlayers;
 
 /** handles plugin registration to log message delivery */
 public class Courier {
