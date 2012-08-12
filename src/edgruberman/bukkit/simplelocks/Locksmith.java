@@ -16,6 +16,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 public class Locksmith implements Listener {
@@ -187,7 +188,10 @@ public class Locksmith implements Listener {
                     return;
                 }
 
-                interaction.getPlayer().setItemInHand(null);
+                final ItemStack remaining = interaction.getPlayer().getItemInHand();
+                remaining.setAmount(remaining.getAmount() - 1);
+                interaction.getPlayer().setItemInHand(remaining);
+
                 this.createLock(interaction.getClickedBlock().getRelative(interaction.getBlockFace()), interaction.getBlockFace().getOppositeFace(), ownerName);
             }
         }
