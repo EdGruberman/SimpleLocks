@@ -27,7 +27,7 @@ public class LockOwner implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            Main.courier.send(sender, "requiresParameter", "<Name>");
+            Main.courier.send(sender, "requiresArgument", "<Name>");
             return false;
         }
 

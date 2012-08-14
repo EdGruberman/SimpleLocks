@@ -1,6 +1,5 @@
 name: @NAME@
 description: Locks for chests
-softdepend: [TimeService]
 version: @VERSION@
 author: @AUTHOR@
 main: @MAIN@

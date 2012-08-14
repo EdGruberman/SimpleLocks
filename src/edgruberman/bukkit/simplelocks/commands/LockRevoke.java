@@ -28,7 +28,7 @@ public class LockRevoke implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            Main.courier.send(sender, "requiresParameter", "<Name>");
+            Main.courier.send(sender, "requiresArgument", "<Name>");
             return false;
         }
 
@@ -45,7 +45,7 @@ public class LockRevoke implements CommandExecutor {
         }
 
         if (!lock.isOwner(player)) {
-            Main.courier.send(sender, "requiresOwner", player.getName());
+            Main.courier.send(sender, "requiresOwner", label, lock.getOwner());
             return true;
         }
 
