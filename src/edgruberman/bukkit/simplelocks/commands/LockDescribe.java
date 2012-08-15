@@ -2,7 +2,6 @@ package edgruberman.bukkit.simplelocks.commands;
 
 import java.util.HashSet;
 
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,11 +11,11 @@ import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
 import edgruberman.bukkit.simplelocks.Main;
 
-public class LockInfo implements CommandExecutor {
+public class LockDescribe implements CommandExecutor {
 
     private final Locksmith locksmith;
 
-    public LockInfo(final Locksmith locksmith) {
+    public LockDescribe(final Locksmith locksmith) {
         this.locksmith = locksmith;
     }
 
@@ -34,9 +33,10 @@ public class LockInfo implements CommandExecutor {
             return true;
         }
 
-        final Block locked = lock.getLocked();
-        Main.courier.send(sender, "info", lock.getOwner(), lock.getAccess().toString().replaceAll("^\\[|\\]$", ""), locked.getType().toString(), locked.getX(), locked.getY(), locked.getZ());
-        Main.courier.send(sender, (!lock.hasAccess(player) ? "denied" : (lock.isOwner(player) ? "owner" : "access")));
+        Main.courier.send(player, "describe"
+                , lock.getOwner(), lock.getAccess().toString().replaceAll("^\\[|\\]$", "")
+                , lock.isOwner(player)?1:0, lock.hasAccess(player)?1:0
+                , lock.getAccess().size());
         return true;
     }
 

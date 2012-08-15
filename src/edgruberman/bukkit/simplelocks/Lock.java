@@ -77,6 +77,8 @@ public class Lock {
      * @return true if player has ownership; false otherwise
      */
     public boolean isOwner(final Player player) {
+        if (player.hasPermission("simplelocks.override")) return true;
+
         if (this.isExplicitOwner(player.getName())) return true;
 
         if (player.isPermissionSet(this.getOwner()) && player.hasPermission(this.getOwner())) return true;

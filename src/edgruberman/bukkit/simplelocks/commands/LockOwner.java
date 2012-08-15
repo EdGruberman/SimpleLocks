@@ -2,6 +2,7 @@ package edgruberman.bukkit.simplelocks.commands;
 
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,11 +32,6 @@ public class LockOwner implements CommandExecutor {
             return false;
         }
 
-        if (args[0].length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.courier.send(sender, "nameTooLong");
-            return false;
-        }
-
         final Player player = (Player) sender;
         final Lock lock = this.locksmith.findLock(player.getTargetBlock((HashSet<Byte>) null, 4));
         if (lock == null) {
@@ -43,8 +39,14 @@ public class LockOwner implements CommandExecutor {
             return true;
         }
 
-        lock.setOwner(args[0]);
-        Main.courier.send(sender, "ownerSuccess", args[0]);
+        final String name = this.locksmith.getSubstitution(Bukkit.getOfflinePlayer(args[0]).getName());
+        if (name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
+            Main.courier.send(sender, "nameTooLong", name, name.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
+            return true;
+        }
+
+        lock.setOwner(name);
+        Main.courier.send(sender, "ownerSuccess", name);
         lock.refresh();
         return true;
     }

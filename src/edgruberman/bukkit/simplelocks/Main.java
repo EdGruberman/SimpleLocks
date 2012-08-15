@@ -13,12 +13,13 @@ import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import edgruberman.bukkit.simplelocks.commands.LockBreak;
+import edgruberman.bukkit.simplelocks.commands.LockDescribe;
 import edgruberman.bukkit.simplelocks.commands.LockGrant;
-import edgruberman.bukkit.simplelocks.commands.LockInfo;
 import edgruberman.bukkit.simplelocks.commands.LockOwner;
 import edgruberman.bukkit.simplelocks.commands.LockRevoke;
 import edgruberman.bukkit.simplelocks.commands.Reload;
@@ -29,9 +30,7 @@ public class Main extends JavaPlugin {
 
     public static ConfigurationCourier courier;
 
-    private static final Version MINIMUM_CONFIGURATION = new Version("2.3.0");
-
-    private Locksmith locksmith = null;
+    private static final Version MINIMUM_CONFIGURATION = new Version("2.4.0");
 
     @Override
     public void onEnable() {
@@ -44,19 +43,26 @@ public class Main extends JavaPlugin {
         if (title.length() < 1 || title.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH)
             throw new IllegalArgumentException("Lock title must be between 1 and " + Locksmith.MAXIMUM_SIGN_LINE_LENGTH + " characters");
 
-        this.locksmith = new Locksmith(this, title);
+        final Locksmith locksmith = new Locksmith(this, title);
+        final ConfigurationSection substitutions = this.getConfig().getConfigurationSection("substitutions");
+        if (substitutions != null)
+            for (final String name : substitutions.getKeys(false))
+                locksmith.substitutions.put(name, substitutions.getString(name));
 
-        this.getCommand("simplelocks:lock.info").setExecutor(new LockInfo(this.locksmith));
-        this.getCommand("simplelocks:lock.grant").setExecutor(new LockGrant(this.locksmith));
-        this.getCommand("simplelocks:lock.revoke").setExecutor(new LockRevoke(this.locksmith));
-        this.getCommand("simplelocks:lock.owner").setExecutor(new LockOwner(this.locksmith));
-        this.getCommand("simplelocks:lock.break").setExecutor(new LockBreak(this.locksmith));
+        if (this.getConfig().getBoolean("explosionProtection: true")) new ExplosiveOrdnanceDisposal(this, locksmith);
+
+        this.getCommand("simplelocks:lock.describe").setExecutor(new LockDescribe(locksmith));
+        this.getCommand("simplelocks:lock.grant").setExecutor(new LockGrant(locksmith));
+        this.getCommand("simplelocks:lock.revoke").setExecutor(new LockRevoke(locksmith));
+        this.getCommand("simplelocks:lock.owner").setExecutor(new LockOwner(locksmith));
+        this.getCommand("simplelocks:lock.break").setExecutor(new LockBreak(locksmith));
         this.getCommand("simplelocks:reload").setExecutor(new Reload(this));
     }
 
     @Override
     public void onDisable() {
         HandlerList.unregisterAll(this);
+        Main.courier = null;
     }
 
     @Override

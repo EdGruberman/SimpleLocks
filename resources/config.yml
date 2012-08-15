@@ -1,23 +1,20 @@
 logLevel: INFO
 title: '§1++ LOCKED ++'
+explosionProtection: true
 messages:
-    info: '-> Lock: §nOwner§r={1}  §nAccess§r={2}  §8({3} at x:{4} y:{5} z:{6})' # 1 = Owner, 2 = Access, 3 = Material, 4 = X Coordinate, 5 = Y Coordinate, 6 = Z coordinate
-    access: '-> You have lock §aaccess'
-    owner: '-> You are lock §aowner§r    Modify: §d/lock(+|-) §o<Name>'
-    denied: '-> Lock access §cdenied'
-    createNameTooLong: '-> Lock §ccreation denied§r; Owner name too long'
-    removeDenied: '-> Lock §cremoval denied§r; Owner required: {1}' # 1 = Owner
+    describe: '-> Lock {3,choice,0#§e|1#§2}Owner§r: {1}{4,choice,0#§e|1#§2}{5,choice,0#|1# Access§r: {2}}{3,choice,0#|1#'' §8(§d/lock(+|-) §o<Name>§8)''}' # 1 = Owner, 2 = Access, 3 = isOwner(0|1), 4 = hasAccess(0|1), 5 = Access Count
+    denied: '-> Lock access §cdenied§r; Please consult owner: {1}' # 1 = Owner
     grantAlready: '-> Lock access §ealready explicitly granted§r to {1}' # 1 = <Name>
     grantFull: '-> Lock §eunable to grant access§r (Lock full)'
-    grantSuccess: '-> Lock §aexplicit access granted§r to {1}' # 1 = <Name>
+    grantSuccess: '-> Lock §2explicit access granted§r to {1}' # 1 = <Name>
     revokeMissing: '-> Lock does §enot explicitly grant access§r to {1}' # 1 = <Name>
-    revokeSuccess: '-> Lock §aexplicit access revoked§r from {1}' # 1 = <Name>
-    ownerSuccess: '-> Lock §aowner§r changed to {1}' # 1 = Owner
-    nameTooLong: '-> Lock name must be §c15 characters§r or less'
-    break: '-> Lock §abroken'
-    reload: '-> {1} plugin §areloaded' # 1 = Plugin
-    requiresOwner: '-> §cOnly lock owner§r ({2}) can use the {1} command' # 1 = Command Label, 2 = Owner
+    revokeSuccess: '-> Lock §2explicit access revoked§r from {1}' # 1 = <Name>
+    ownerSuccess: '-> Lock §2owner changed§r to {1}' # 1 = Owner
+    nameTooLong: '-> Lock name §cover {3} characters§r: {1} ({2})' # 1 = <Name>, 2 = Length, 3 = Maximum
+    break: '-> Lock §2broken'
+    reload: '-> {1} plugin §2reloaded' # 1 = Plugin
+    requiresOwner: '-> §cOnly the lock owner§r ({2}) can use the {1} command' # 1 = Command Label, 2 = Owner
     requiresPlayer: '-> §cOnly in-game players§r can use the {1} command' # 1 = Command Label
     requiresLock: '-> §eNo lock§r identified'
-    requiresArgument: '-> Required §cargument missing§r: {1}' # 1 = Argument Name
+    requiresArgument: '-> Required §cargument missing§r: §o{1}' # 1 = Argument Name
 version: @VERSION@
