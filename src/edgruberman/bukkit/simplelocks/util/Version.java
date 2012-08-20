@@ -1,5 +1,4 @@
-package edgruberman.bukkit.simplelocks;
-
+package edgruberman.bukkit.simplelocks.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
