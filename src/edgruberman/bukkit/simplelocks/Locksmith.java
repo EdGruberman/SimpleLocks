@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -193,18 +194,24 @@ public class Locksmith implements Listener {
         if (interaction.getClickedBlock().getRelative(interaction.getBlockFace()).getType() != Material.AIR) return;
 
         // check for default owner substitute (Long names won't fit on a sign)
-        final String ownerName = this.getSubstitution(interaction.getPlayer().getName());
-        if (ownerName.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.courier.send(interaction.getPlayer(), "nameTooLong", ownerName, ownerName.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
+        final String owner = this.getSubstitution(interaction.getPlayer().getName());
+        if (owner.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
+            Main.courier.send(interaction.getPlayer(), "nameTooLong", owner, owner.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
             return;
         }
+
+        final Block block = interaction.getClickedBlock().getRelative(interaction.getBlockFace());
+        final BlockFace attached = interaction.getBlockFace().getOppositeFace();
+        final LockCreate custom = new LockCreate(block, attached, owner, interaction.getPlayer());
+        Bukkit.getPluginManager().callEvent(custom);
+        if (custom.isCancelled()) return;
 
         // remove only 1 sign from player's hand
         final ItemStack remaining = interaction.getPlayer().getItemInHand();
         remaining.setAmount(remaining.getAmount() - 1);
         interaction.getPlayer().setItemInHand(remaining);
 
-        this.createLock(interaction.getClickedBlock().getRelative(interaction.getBlockFace()), interaction.getBlockFace().getOppositeFace(), ownerName);
+        this.createLock(block, attached, owner);
         interaction.setUseInteractedBlock(Result.DENY); // don't open the chest
     }
 
