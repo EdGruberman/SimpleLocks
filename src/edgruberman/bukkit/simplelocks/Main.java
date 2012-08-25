@@ -18,9 +18,7 @@ public class Main extends CustomPlugin {
     public static Courier courier;
 
     @Override
-    public void onLoad() {
-        this.putConfigMinimum("config.yml", "2.4.0");
-    }
+    public void onLoad() { this.putConfigMinimum("config.yml", "2.4.0"); }
 
     @Override
     public void onEnable() {
