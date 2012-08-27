@@ -233,7 +233,7 @@ public class Locksmith implements Listener {
                     + " z:" + broken.getBlock().getZ()
         );
 
-        lock.refresh();
+        lock.sign.update();
     }
 
 }

@@ -63,7 +63,6 @@ public class LockGrant implements CommandExecutor {
 
         lock.addAccess(name);
         Main.courier.send(sender, "grantSuccess", name);
-        lock.refresh();
         return true;
     }
 

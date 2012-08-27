@@ -1,8 +1,8 @@
 name: @NAME@
-description: Locks for chests
 version: @VERSION@
-author: @AUTHOR@
-main: @MAIN@
+description: Locks for chests
+author: EdGruberman (ed@rjump.com)
+main: edgruberman.bukkit.simplelocks.Main
 commands:
     'simplelocks:lock.describe':
         aliases: [lock, lock.describe]

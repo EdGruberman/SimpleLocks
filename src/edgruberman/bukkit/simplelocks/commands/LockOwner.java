@@ -47,7 +47,6 @@ public class LockOwner implements CommandExecutor {
 
         lock.setOwner(name);
         Main.courier.send(sender, "ownerSuccess", name);
-        lock.refresh();
         return true;
     }
 

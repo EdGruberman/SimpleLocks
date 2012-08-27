@@ -178,19 +178,4 @@ public class Lock {
             throw new IllegalStateException("Unable to update sign block; State was changed external to plugin");
     }
 
-    /**
-     * Force clients to render sign again to recognize new or removed text.
-     * TODO schedule task to run shortly after block replaced event finishes to update block
-     * TODO make better
-     */
-    public void refresh() {
-        final org.bukkit.material.Sign material = (org.bukkit.material.Sign) this.sign.getData();
-
-        // Toggle attached direction
-        material.setFacingDirection(material.getAttachedFace());
-        this.sign.update(true);
-        material.setFacingDirection(material.getAttachedFace());
-        this.sign.update(true);
-    }
-
 }

@@ -58,7 +58,6 @@ public class LockRevoke implements CommandExecutor {
 
         lock.removeAccess(name);
         Main.courier.send(sender, "revokeSuccess", name);
-        lock.refresh();
         return true;
     }
 
