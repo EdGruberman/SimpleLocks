@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -193,6 +194,13 @@ public class Locksmith implements Listener {
         if (interaction.getBlockFace() == BlockFace.UP || interaction.getBlockFace() == BlockFace.DOWN) return;
         if (interaction.getClickedBlock().getRelative(interaction.getBlockFace()).getType() != Material.AIR) return;
 
+        // give other plugins a chance to cancel this sign creation as a standard block place event
+        final Block block = interaction.getClickedBlock().getRelative(interaction.getBlockFace());
+        final ItemStack remaining = interaction.getPlayer().getItemInHand();
+        final BlockPlaceEvent place = new BlockPlaceEvent(block, block.getState(), interaction.getClickedBlock(), remaining, interaction.getPlayer(), true);
+        Bukkit.getPluginManager().callEvent(place);
+        if (place.isCancelled()) return;
+
         // check for default owner substitute (Long names won't fit on a sign)
         final String owner = this.getSubstitution(interaction.getPlayer().getName());
         if (owner.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
@@ -200,14 +208,12 @@ public class Locksmith implements Listener {
             return;
         }
 
-        final Block block = interaction.getClickedBlock().getRelative(interaction.getBlockFace());
         final BlockFace attached = interaction.getBlockFace().getOppositeFace();
         final LockCreate custom = new LockCreate(block, attached, owner, interaction.getPlayer());
         Bukkit.getPluginManager().callEvent(custom);
         if (custom.isCancelled()) return;
 
         // remove only 1 sign from player's hand
-        final ItemStack remaining = interaction.getPlayer().getItemInHand();
         remaining.setAmount(remaining.getAmount() - 1);
         interaction.getPlayer().setItemInHand(remaining);
 
