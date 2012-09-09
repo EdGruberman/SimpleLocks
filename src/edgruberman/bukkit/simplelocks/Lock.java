@@ -32,9 +32,9 @@ public class Lock {
      *
      * @param block changed to wall sign containing lock information
      * @param attached face adjacent to lockable
-     * @param owner player name or group name
+     * @param access player name or group name
      */
-    Lock(final Locksmith locksmith, final Block block, final BlockFace attached, final String owner) {
+    Lock(final Locksmith locksmith, final Block block, final BlockFace attached, final String access) {
         this.locksmith = locksmith;
         final Block locked = block.getRelative(attached);
         if (this.locksmith.isLocked(locked)) throw new IllegalArgumentException("Block already locked");
@@ -47,50 +47,16 @@ public class Lock {
 
         this.sign.setLine(0, this.locksmith.title);
 
-        this.setOwner(owner); // Updates block for previous state changes also
-    }
-
-    public void setOwner(final String name) {
-        this.sign.setLine(1, name);
-        this.update();
-    }
-
-    public String getOwner() {
-        return this.sign.getLine(1);
-    }
-
-    /**
-     * Determines if name is explicitly (group memberships ignored) listed as
-     * owner (access ignored)
-     *
-     * @param name player name or partial group name
-     * @return true if name is explicitly declared as owner
-     */
-    boolean isExplicitOwner(final String name) {
-        return this.getOwner().equalsIgnoreCase(name);
-    }
-
-    /**
-     * Determines if player has ownership of lock
-     * (either explicitly or through group membership)
-     *
-     * @return true if player has ownership; false otherwise
-     */
-    public boolean isOwner(final Player player) {
-        if (player.hasPermission("simplelocks.override")) return true;
-
-        if (this.isExplicitOwner(player.getName())) return true;
-
-        if (player.isPermissionSet(this.getOwner()) && player.hasPermission(this.getOwner())) return true;
-
-        return false;
+        this.addAccess(access); // Updates block for previous state changes also
     }
 
     public List<String> getAccess() {
         final String[] lines = this.sign.getLines();
         final List<String> access = new ArrayList<String>();
-        if (lines[2].length() > 0) access.add(lines[2]);
-        if (lines[3].length() > 0) access.add(lines[3]);
+        for (int i = 1; i <= 3; i++)
+            if (lines[i].length() > 0)
+                access.add(lines[i]);
+
         return access;
     }
 
@@ -107,7 +73,8 @@ public class Lock {
             throw new IllegalStateException("Lock access has already been granted for name: " + name);
 
         Integer blank = null;
-        if (this.sign.getLine(2).length() == 0) blank = 2;
+        if (this.sign.getLine(1).length() == 0) blank = 1;
+        else if (this.sign.getLine(2).length() == 0) blank = 2;
         else if (this.sign.getLine(3).length() == 0) blank = 3;
         if (blank == null)
             throw new IllegalStateException("Lock has no blank access lines left to add access for name: " + name);
@@ -125,7 +92,8 @@ public class Lock {
         final String compare = name.toLowerCase();
 
         Integer direct = null;
-        if (this.sign.getLine(2) != null && this.sign.getLine(2).toLowerCase().equals(compare)) direct = 2;
+        if (this.sign.getLine(1) != null && this.sign.getLine(1).toLowerCase().equals(compare)) direct = 1;
+        else if (this.sign.getLine(2) != null && this.sign.getLine(2).toLowerCase().equals(compare)) direct = 2;
         else if (this.sign.getLine(3) != null && this.sign.getLine(3).toLowerCase().equals(compare)) direct = 3;
         if (direct == null)
             throw new IllegalStateException("Lock does not grant access to name: " + name);
@@ -157,7 +125,7 @@ public class Lock {
      * @return true if player has access or is owner; false otherwise
      */
     public boolean hasAccess(final Player player) {
-        if (this.isOwner(player)) return true;
+        if (player.hasPermission("simplelocks.override")) return true;
 
         if (this.hasExplicitAccess(player.getName())) return true;
 

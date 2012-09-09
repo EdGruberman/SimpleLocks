@@ -40,8 +40,8 @@ public class LockGrant implements CommandExecutor {
             return true;
         }
 
-        if (!lock.isOwner(player)) {
-            Main.courier.send(sender, "requiresOwner", label, lock.getOwner());
+        if (!lock.hasAccess(player)) {
+            Main.courier.send(sender, "requiresAccess", label);
             return true;
         }
 
@@ -56,7 +56,7 @@ public class LockGrant implements CommandExecutor {
             return true;
         }
 
-        if (lock.getAccess().size() == 2) {
+        if (lock.getAccess().size() == 3) {
             Main.courier.send(sender, "grantFull", name);
             return true;
         }

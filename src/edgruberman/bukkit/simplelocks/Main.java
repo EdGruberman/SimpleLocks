@@ -6,7 +6,6 @@ import org.bukkit.event.HandlerList;
 import edgruberman.bukkit.simplelocks.commands.LockBreak;
 import edgruberman.bukkit.simplelocks.commands.LockDescribe;
 import edgruberman.bukkit.simplelocks.commands.LockGrant;
-import edgruberman.bukkit.simplelocks.commands.LockOwner;
 import edgruberman.bukkit.simplelocks.commands.LockRevoke;
 import edgruberman.bukkit.simplelocks.commands.Reload;
 import edgruberman.bukkit.simplelocks.messaging.ConfigurationCourier;
@@ -18,7 +17,7 @@ public class Main extends CustomPlugin {
     public static Courier courier;
 
     @Override
-    public void onLoad() { this.putConfigMinimum("config.yml", "2.4.0"); }
+    public void onLoad() { this.putConfigMinimum("config.yml", "3.0.0a4"); }
 
     @Override
     public void onEnable() {
@@ -41,7 +40,6 @@ public class Main extends CustomPlugin {
         this.getCommand("simplelocks:lock.describe").setExecutor(new LockDescribe(locksmith));
         this.getCommand("simplelocks:lock.grant").setExecutor(new LockGrant(locksmith));
         this.getCommand("simplelocks:lock.revoke").setExecutor(new LockRevoke(locksmith));
-        this.getCommand("simplelocks:lock.owner").setExecutor(new LockOwner(locksmith));
         this.getCommand("simplelocks:lock.break").setExecutor(new LockBreak(locksmith));
         this.getCommand("simplelocks:reload").setExecutor(new Reload(this));
     }

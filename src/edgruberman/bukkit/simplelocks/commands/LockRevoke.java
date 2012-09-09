@@ -40,8 +40,8 @@ public class LockRevoke implements CommandExecutor {
             return true;
         }
 
-        if (!lock.isOwner(player)) {
-            Main.courier.send(sender, "requiresOwner", label, lock.getOwner());
+        if (!lock.hasAccess(player)) {
+            Main.courier.send(sender, "requiresAccess", label, lock.getAccess());
             return true;
         }
 
@@ -57,6 +57,12 @@ public class LockRevoke implements CommandExecutor {
         }
 
         lock.removeAccess(name);
+        if (!lock.hasAccess(player)){
+            Main.courier.send(sender, "revokeRevert");
+            lock.addAccess(name);
+            return true;
+        }
+
         Main.courier.send(sender, "revokeSuccess", name);
         return true;
     }

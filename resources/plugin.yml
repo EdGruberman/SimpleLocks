@@ -2,6 +2,7 @@ name: SimpleLocks
 version: @VERSION@
 description: Locks for chests
 author: EdGruberman (ed@rjump.com)
+website: http://github.com/EdGruberman/SimpleLocks
 main: edgruberman.bukkit.simplelocks.Main
 commands:
     'simplelocks:lock.describe':
@@ -11,18 +12,13 @@ commands:
         usage: /<command>
     'simplelocks:lock.grant':
         aliases: [lock+, lock.grant]
-        description: Grant explicit lock access to targeted block (* Owner required)
+        description: Grant explicit lock access to targeted block
         permission: simplelocks.lock.grant
         usage: /<command> <Name>
     'simplelocks:lock.revoke':
         aliases: [lock-, lock.revoke]
-        description: Revoke explicit lock access from targeted block (* Owner required)
+        description: Revoke explicit lock access from targeted block
         permission: simplelocks.lock.revoke
-        usage: /<command> <Name>
-    'simplelocks:lock.owner':
-        aliases: [lock.owner]
-        description: Change lock owner for targeted block
-        permission: simplelocks.lock.owner
         usage: /<command> <Name>
     'simplelocks:lock.break':
         aliases: [lock.break]
@@ -35,7 +31,7 @@ commands:
         usage: /<command>
 permissions:
     simplelocks.user:
-        description: Can create and edit locks
+        description: Can create new locks and edit accessible locks
         default: true
         children:
             simplelocks.create: true
@@ -47,7 +43,6 @@ permissions:
         default: op
         children:
             simplelocks.user: true
-            simplelocks.lock.owner: true
             simplelocks.lock.break: true
             simplelocks.override: true
             simplelocks.reload: true
@@ -62,9 +57,6 @@ permissions:
         default: false
     simplelocks.lock.revoke:
         description: Can use lock.revoke command if lock owner
-        default: false
-    simplelocks.lock.owner:
-        description: Can use lock.owner command on any lock
         default: false
     simplelocks.lock.break:
         description: Can use lock.break command on any lock

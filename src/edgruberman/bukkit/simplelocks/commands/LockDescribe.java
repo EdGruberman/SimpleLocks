@@ -33,10 +33,7 @@ public class LockDescribe implements CommandExecutor {
             return true;
         }
 
-        Main.courier.send(player, "describe"
-                , lock.getOwner(), lock.getAccess().toString().replaceAll("^\\[|\\]$", "")
-                , lock.isOwner(player)?1:0, lock.hasAccess(player)?1:0
-                , lock.getAccess().size());
+        Main.courier.send(player, "describe", lock.getAccess().toString().replaceAll("^\\[|\\]$", ""), lock.hasAccess(player)?1:0);
         return true;
     }
 
