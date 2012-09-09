@@ -1,4 +1,4 @@
-name: @NAME@
+name: SimpleLocks
 version: @VERSION@
 description: Locks for chests
 author: EdGruberman (ed@rjump.com)
