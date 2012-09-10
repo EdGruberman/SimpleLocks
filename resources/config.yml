@@ -3,7 +3,7 @@ title: '§1++ LOCKED ++'
 explosionProtection: true
 messages:
     describe: '-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§d/lock(+|-) §o<Name>§8)''}' # 1 = Access, 2 = hasAccess(0|1)
-    denied: '-> §7Lock §caccess denied§7; §8(Access: §7{1}§8)' # 1 = Access
+    denied: '-> §7Lock §caccess denied §8(Access: §7{1}§8)' # 1 = Access
     grantAlready: '-> §7Lock access §ealready explicitly granted§7 to §o{1}' # 1 = <Name>
     grantFull: '-> §7Lock §eunable to grant access §8(§7Access full§8)'
     grantSuccess: '-> §7Lock §2explicit access granted§7 to §o{1}' # 1 = <Name>
@@ -13,7 +13,7 @@ messages:
     nameTooLong: '-> §7Lock name §cover {3} characters§7: §o{1} §8(§7{2}§8)' # 1 = <Name>, 2 = Length, 3 = Maximum
     break: '-> §7Lock §2broken'
     reload: '-> §7{1} plugin §2reloaded' # 1 = Plugin
-    requiresAccess: '-> §cOnly players with lock access§c can use the {1} command' # 1 = Command Label
+    requiresAccess: '-> §cOnly players with lock access§7 can use the {1} command' # 1 = Command Label
     requiresPlayer: '-> §cOnly in-game players§7 can use the {1} command' # 1 = Command Label
     requiresLock: '-> §eNo lock§7 identified'
     requiresArgument: '-> §7Required §cargument missing§7: §o{1}' # 1 = Argument Name

@@ -23,7 +23,9 @@ import org.bukkit.plugin.Plugin;
 
 public class Locksmith implements Listener {
 
-    public static int MAXIMUM_SIGN_LINE_LENGTH = 15;
+    public static final int MAXIMUM_SIGN_LINE_LENGTH = 15;
+
+    private static final List<BlockFace> CARDINALS = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
     /** text on the first line of the sign that indicates it is a lock */
     public final String title;
@@ -115,21 +117,19 @@ public class Locksmith implements Listener {
     private Block findChestLock(final Block chest) {
         if (chest.getTypeId() != Material.CHEST.getId()) return null;
 
-        final List<BlockFace> cardinals = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-
         // Check directly adjacent blocks for lock
-        for (final BlockFace direction : cardinals) {
+        for (final BlockFace direction : Locksmith.CARDINALS) {
             final Block relative = chest.getRelative(direction);
             if (this.isLock(relative, direction.getOppositeFace())) return relative;
         }
 
         // Check directly adjacent blocks for second half of double chest
-        for (final BlockFace direction : cardinals) {
+        for (final BlockFace direction : Locksmith.CARDINALS) {
             final Block relative = chest.getRelative(direction);
             if (relative.getTypeId() == Material.CHEST.getId()) {
 
                 // Found double chest - Check directly adjacent blocks to second half of chest for lock
-                for (final BlockFace direction2 : cardinals) {
+                for (final BlockFace direction2 : Locksmith.CARDINALS) {
                     final Block relative2 = relative.getRelative(direction2);
                     if (this.isLock(relative2, direction2.getOppositeFace())) return relative2;
                 }
