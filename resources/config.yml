@@ -2,7 +2,7 @@ logLevel: INFO
 title: '§1++ LOCKED ++'
 explosionProtection: true
 messages:
-    describe: '-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§d/lock(+|-) §o<Name>§8)''}' # 1 = Access, 2 = hasAccess(0|1)
+    describe: '-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§d/lock+ §o<Player>§8)''}' # 1 = Access, 2 = hasAccess(0|1)
     denied: '-> §7Lock §caccess denied §8(Access: §7{1}§8)' # 1 = Access
     grantAlready: '-> §7Lock access §ealready explicitly granted§7 to §o{1}' # 1 = <Name>
     grantFull: '-> §7Lock §eunable to grant access §8(§7Access full§8)'
