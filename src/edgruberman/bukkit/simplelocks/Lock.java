@@ -129,6 +129,7 @@ public class Lock {
 
         if (this.hasExplicitAccess(player.getName())) return true;
 
+        // permissions must be explicitly set to true to avoid default ops getting access due to permission that doesn't exist
         for (final String line : this.getAccess())
             if (player.isPermissionSet(line) && player.hasPermission(line))
                 return true;
