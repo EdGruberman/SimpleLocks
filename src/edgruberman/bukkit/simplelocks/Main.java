@@ -9,20 +9,19 @@ import edgruberman.bukkit.simplelocks.commands.LockGrant;
 import edgruberman.bukkit.simplelocks.commands.LockRevoke;
 import edgruberman.bukkit.simplelocks.commands.Reload;
 import edgruberman.bukkit.simplelocks.messaging.ConfigurationCourier;
-import edgruberman.bukkit.simplelocks.messaging.Courier;
 import edgruberman.bukkit.simplelocks.util.CustomPlugin;
 
 public class Main extends CustomPlugin {
 
-    public static Courier courier;
+    public static ConfigurationCourier courier;
 
     @Override
-    public void onLoad() { this.putConfigMinimum(CustomPlugin.CONFIGURATION_FILE, "3.0.0"); }
+    public void onLoad() { this.putConfigMinimum("3.1.0"); }
 
     @Override
     public void onEnable() {
         this.reloadConfig();
-        Main.courier = ConfigurationCourier.Factory.create(this).setBase("messages").build();
+        Main.courier = ConfigurationCourier.Factory.create(this).setPath("messages").build();
 
         final String title = this.getConfig().getString("title");
         this.getLogger().config("Lock title: " + title);
@@ -35,7 +34,7 @@ public class Main extends CustomPlugin {
             for (final String name : substitutions.getKeys(false))
                 locksmith.substitutions.put(name, substitutions.getString(name));
 
-        if (this.getConfig().getBoolean("explosionProtection")) new ExplosiveOrdnanceDisposal(this, locksmith);
+        if (this.getConfig().getBoolean("explosion-protection")) new ExplosiveOrdnanceDisposal(this, locksmith);
 
         this.getCommand("simplelocks:lock.describe").setExecutor(new LockDescribe(locksmith));
         this.getCommand("simplelocks:lock.grant").setExecutor(new LockGrant(locksmith));

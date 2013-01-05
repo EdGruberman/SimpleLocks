@@ -202,7 +202,7 @@ public class Locksmith implements Listener {
         // check for default owner substitute (Long names won't fit on a sign)
         final String owner = this.getSubstitution(interaction.getPlayer().getName());
         if (owner.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.courier.send(interaction.getPlayer(), "nameTooLong", owner, owner.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
+            Main.courier.send(interaction.getPlayer(), "name-too-long", owner, owner.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
             return;
         }
 

@@ -1,20 +1,20 @@
-logLevel: INFO
+log-level: INFO
 title: '§1++ LOCKED ++'
-explosionProtection: true
+explosion-protection: true
 messages:
-    describe: '-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§d/lock+ §o<Player>§8)''}' # 1 = Access, 2 = hasAccess(0|1)
-    denied: '-> §7Lock §caccess denied §8(Access: §7{1}§8)' # 1 = Access
-    grantAlready: '-> §7Lock access §ealready explicitly granted§7 to §o{1}' # 1 = <Name>
-    grantFull: '-> §7Lock §eunable to grant access §8(§7Access full§8)'
-    grantSuccess: '-> §7Lock §2explicit access granted§7 to §o{1}' # 1 = <Name>
-    revokeRevert: '-> §7You §ecan not remove§7 your own access to a lock'
-    revokeMissing: '-> §7Lock does §enot explicitly grant access§7 to §o{1}' # 1 = <Name>
-    revokeSuccess: '-> §7Lock §2explicit access revoked§7 from §o{1}' # 1 = <Name>
-    nameTooLong: '-> §7Lock name §cover {3} characters§7: §o{1} §8(§7{2}§8)' # 1 = <Name>, 2 = Length, 3 = Maximum
-    break: '-> §7Lock §2broken'
-    reload: '-> §7{1} plugin §2reloaded' # 1 = Plugin
-    requiresAccess: '-> §cOnly players with lock access§7 can use the {1} command' # 1 = Command Label
-    requiresPlayer: '-> §cOnly in-game players§7 can use the {1} command' # 1 = Command Label
-    requiresLock: '-> §eNo lock§7 identified'
-    requiresArgument: '-> §7Required §cargument missing§7: §o{1}' # 1 = Argument Name
+    describe: '§f-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§7To add: §b/lock+ §o<Player>§8)''}' # 1 = Access, 2 = hasAccess(0|1)
+    denied: '§f-> §7Lock §caccess denied §8(Access: §7{1}§8)' # 1 = Access
+    grant-already: '§f-> §7Lock access §ealready explicitly granted§7 to §o{1}' # 1 = <Name>
+    grant-full: '§f-> §7Lock §eunable to grant access §8(§7Access full§8)'
+    grant-success: '§f-> §7Lock §2explicit access granted§7 to §o{1}' # 1 = <Name>
+    revoke-revert: '§f-> §7You §ecan not remove§7 your own access to a lock'
+    revoke-missing: '§f-> §7Lock does §enot explicitly grant access§7 to §o{1}' # 1 = <Name>
+    revoke-success: '§f-> §7Lock §2explicit access revoked§7 from §o{1}' # 1 = <Name>
+    name-too-long: '§f-> §7Lock name §cover {3} characters§7: §o{1} §8(§7{2}§8)' # 1 = <Name>, 2 = Length, 3 = Maximum
+    break: '§f-> §7Lock §2broken'
+    reload: '§f-> §2Reloaded §7{1} plugin' # 1 = Plugin Name
+    requires-access: '§f-> §cOnly players with lock access§7 can use the §b/{1} §7command' # 1 = Command Label
+    requires-player: '§f-> §cOnly in-game players§7 can use the §b/{1} §7command' # 1 = Command Label
+    requires-lock: '§f-> §eNo lock§7 identified'
+    requires-argument: '§f-> §cMissing §7required argument: §b§o{1}' # 1 = Argument Name
 version: @VERSION@
