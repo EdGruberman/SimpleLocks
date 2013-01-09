@@ -1,4 +1,4 @@
-package edgruberman.bukkit.simplelocks;
+package edgruberman.bukkit.simplelocks.util;
 
 import java.util.logging.Level;
 
@@ -8,6 +8,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
+import edgruberman.bukkit.simplelocks.LockCreate;
 import edgruberman.bukkit.simpleregions.Main;
 import edgruberman.bukkit.simpleregions.Option;
 import edgruberman.bukkit.simpleregions.Region;
