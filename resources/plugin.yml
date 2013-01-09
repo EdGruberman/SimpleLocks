@@ -10,26 +10,26 @@ commands:
         aliases: [lock, lock.describe]
         description: Show lock information for targeted block
         permission: simplelocks.lock.describe
-        usage: /<command>
+        usage: '§f-> §7Usage: §b/<command>'
     'simplelocks:lock.grant':
         aliases: [lock+, lock.grant]
         description: Grant explicit lock access to targeted block
         permission: simplelocks.lock.grant
-        usage: /<command> <Name>
+        usage: '§f-> §7Usage: §b/<command> <Name>'
     'simplelocks:lock.revoke':
         aliases: [lock-, lock.revoke]
         description: Revoke explicit lock access from targeted block
         permission: simplelocks.lock.revoke
-        usage: /<command> <Name>
+        usage: '§f-> §7Usage: §b/<command> <Name>'
     'simplelocks:lock.break':
         aliases: [lock.break]
         description: Remove lock from targeted block
         permission: simplelocks.lock.break
-        usage: /<command>
+        usage: '§f-> §7Usage: §b/<command>'
     'simplelocks:reload':
         description: Reload plugin configuration
         permission: simplelocks.reload
-        usage: /<command>
+        usage: '§f-> §7Usage: §b/<command>'
 permissions:
     simplelocks.user:
         description: Can create new locks and edit accessible locks
