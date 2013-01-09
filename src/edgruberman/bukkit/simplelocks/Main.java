@@ -3,11 +3,11 @@ package edgruberman.bukkit.simplelocks;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.HandlerList;
 
-import edgruberman.bukkit.simplelocks.commands.LockBreak;
-import edgruberman.bukkit.simplelocks.commands.LockDescribe;
-import edgruberman.bukkit.simplelocks.commands.LockGrant;
-import edgruberman.bukkit.simplelocks.commands.LockRevoke;
+import edgruberman.bukkit.simplelocks.commands.Break;
+import edgruberman.bukkit.simplelocks.commands.Describe;
+import edgruberman.bukkit.simplelocks.commands.Grant;
 import edgruberman.bukkit.simplelocks.commands.Reload;
+import edgruberman.bukkit.simplelocks.commands.Revoke;
 import edgruberman.bukkit.simplelocks.messaging.ConfigurationCourier;
 import edgruberman.bukkit.simplelocks.util.CustomPlugin;
 
@@ -36,10 +36,10 @@ public class Main extends CustomPlugin {
 
         if (this.getConfig().getBoolean("explosion-protection")) new ExplosiveOrdnanceDisposal(this, locksmith);
 
-        this.getCommand("simplelocks:lock.describe").setExecutor(new LockDescribe(locksmith));
-        this.getCommand("simplelocks:lock.grant").setExecutor(new LockGrant(locksmith));
-        this.getCommand("simplelocks:lock.revoke").setExecutor(new LockRevoke(locksmith));
-        this.getCommand("simplelocks:lock.break").setExecutor(new LockBreak(locksmith));
+        this.getCommand("simplelocks:describe").setExecutor(new Describe(locksmith));
+        this.getCommand("simplelocks:grant").setExecutor(new Grant(locksmith));
+        this.getCommand("simplelocks:revoke").setExecutor(new Revoke(locksmith));
+        this.getCommand("simplelocks:break").setExecutor(new Break(locksmith));
         this.getCommand("simplelocks:reload").setExecutor(new Reload(this));
     }
 

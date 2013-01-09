@@ -12,11 +12,11 @@ import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
 import edgruberman.bukkit.simplelocks.Main;
 
-public class LockRevoke implements CommandExecutor {
+public class Revoke implements CommandExecutor {
 
     private final Locksmith locksmith;
 
-    public LockRevoke(final Locksmith locksmith) {
+    public Revoke(final Locksmith locksmith) {
         this.locksmith = locksmith;
     }
 

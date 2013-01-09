@@ -6,25 +6,25 @@ website: http://github.com/EdGruberman/SimpleLocks
 main: edgruberman.bukkit.simplelocks.Main
 loadbefore: [SimpleRegions]
 commands:
-    'simplelocks:lock.describe':
-        aliases: [lock, lock.describe]
+    'simplelocks:describe':
+        aliases: [lock.describe, 'lock?', 'l?']
         description: Show lock information for targeted block
-        permission: simplelocks.lock.describe
+        permission: simplelocks.describe
         usage: '§f-> §7Usage: §b/<command>'
-    'simplelocks:lock.grant':
-        aliases: [lock+, lock.grant]
+    'simplelocks:grant':
+        aliases: [lock.grant, lock+, l+]
         description: Grant explicit lock access to targeted block
-        permission: simplelocks.lock.grant
+        permission: simplelocks.grant
         usage: '§f-> §7Usage: §b/<command> <Name>'
-    'simplelocks:lock.revoke':
-        aliases: [lock-, lock.revoke]
+    'simplelocks:revoke':
+        aliases: [lock.revoke, lock-, l-]
         description: Revoke explicit lock access from targeted block
-        permission: simplelocks.lock.revoke
+        permission: simplelocks.revoke
         usage: '§f-> §7Usage: §b/<command> <Name>'
-    'simplelocks:lock.break':
+    'simplelocks:break':
         aliases: [lock.break]
         description: Remove lock from targeted block
-        permission: simplelocks.lock.break
+        permission: simplelocks.break
         usage: '§f-> §7Usage: §b/<command>'
     'simplelocks:reload':
         description: Reload plugin configuration

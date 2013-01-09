@@ -12,11 +12,11 @@ import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
 import edgruberman.bukkit.simplelocks.Main;
 
-public class LockGrant implements CommandExecutor {
+public class Grant implements CommandExecutor {
 
     private final Locksmith locksmith;
 
-    public LockGrant(final Locksmith locksmith) {
+    public Grant(final Locksmith locksmith) {
         this.locksmith = locksmith;
     }
 
