@@ -4,6 +4,7 @@ description: Locks for chests
 author: EdGruberman (ed@rjump.com)
 website: http://github.com/EdGruberman/SimpleLocks
 main: edgruberman.bukkit.simplelocks.Main
+loadbefore: [SimpleRegions]
 commands:
     'simplelocks:lock.describe':
         aliases: [lock, lock.describe]

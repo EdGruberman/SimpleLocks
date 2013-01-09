@@ -12,6 +12,7 @@ messages:
     revoke-success: '§f-> §7Lock §2explicit access revoked§7 from §o{1}' # 1 = <Name>
     name-too-long: '§f-> §7Lock name §cover {3} characters§7: §o{1} §8(§7{2}§8)' # 1 = <Name>, 2 = Length, 3 = Maximum
     break: '§f-> §7Lock §2broken'
+    region-cancel-create: '§f-> §7Locks §ccan not be created§7 in region: {1}' # 1 = Region
     reload: '§f-> §2Reloaded §7{1} plugin' # 1 = Plugin Name
     requires-access: '§f-> §cOnly players with lock access§7 can use the §b/{1} §7command' # 1 = Command Label
     requires-player: '§f-> §cOnly in-game players§7 can use the §b/{1} §7command' # 1 = Command Label
