@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,7 +48,22 @@ public class Locksmith implements Listener {
      * @param owner player name or group name
      */
     Lock createLock(final Block block, final BlockFace attached, final String owner) {
-        return new Lock(this, block, attached, owner);
+        final Block locked = block.getRelative(attached);
+        if (this.isLocked(locked)) throw new IllegalStateException("block already locked: " + locked);
+
+        // configure material
+        final org.bukkit.material.Sign material = new org.bukkit.material.Sign(Material.WALL_SIGN);
+        material.setFacingDirection(attached.getOppositeFace());
+        block.setTypeIdAndData(material.getItemTypeId(), material.getData(), true);
+
+        // change first line to lock title
+        final Sign sign = (Sign) block.getState();
+        sign.setLine(0, this.title);
+
+        final Lock lock = new Lock(sign);
+        lock.addAccess(owner); // updates block for previous state changes also
+
+        return lock;
     }
 
     /**
@@ -100,12 +116,12 @@ public class Locksmith implements Listener {
      * @return Lock associated with block; null if none
      */
     public Lock findLock(final Block block) {
-        if (this.isLock(block)) return new Lock(this, block);
+        if (this.isLock(block)) return new Lock((Sign) block.getState());
 
         final Block lock = this.findChestLock(block);
-        if (lock == null) return null;
+        if (lock != null) return new Lock((Sign) lock.getState());
 
-        return new Lock(this, lock);
+        return null;
     }
 
     /**
@@ -117,23 +133,19 @@ public class Locksmith implements Listener {
     private Block findChestLock(final Block chest) {
         if (chest.getTypeId() != Material.CHEST.getId()) return null;
 
-        // Check directly adjacent blocks for lock
+        // check directly adjacent blocks for lock
         for (final BlockFace direction : Locksmith.CARDINALS) {
             final Block relative = chest.getRelative(direction);
-            if (this.isLock(relative, direction.getOppositeFace())) return relative;
-        }
 
-        // Check directly adjacent blocks for second half of double chest
-        for (final BlockFace direction : Locksmith.CARDINALS) {
-            final Block relative = chest.getRelative(direction);
             if (relative.getTypeId() == Material.CHEST.getId()) {
-
-                // Found double chest - Check directly adjacent blocks to second half of chest for lock
+                // found double chest - check directly adjacent blocks to second half of chest for lock
                 for (final BlockFace direction2 : Locksmith.CARDINALS) {
                     final Block relative2 = relative.getRelative(direction2);
                     if (this.isLock(relative2, direction2.getOppositeFace())) return relative2;
                 }
 
+            } else {
+                if (this.isLock(relative, direction.getOppositeFace())) return relative;
             }
         }
 
@@ -155,8 +167,7 @@ public class Locksmith implements Listener {
             final Lock lock = this.findLock(interaction.getClickedBlock());
             if (lock == null) return;
 
-            Main.courier.send(interaction.getPlayer(), "describe"
-                    , lock.getAccess().toString().replaceAll("^\\[|\\]$", ""), lock.hasAccess(interaction.getPlayer())?1:0);
+            Main.courier.send(interaction.getPlayer(), "describe", lock.getAccess().toString().replaceAll("^\\[|\\]$", ""), lock.hasAccess(interaction.getPlayer())?1:0);
             return;
         }
 
@@ -206,6 +217,7 @@ public class Locksmith implements Listener {
             return;
         }
 
+        // give chance to cancel lock creation
         final BlockFace attached = interaction.getBlockFace().getOppositeFace();
         final LockCreate custom = new LockCreate(block, attached, owner, interaction.getPlayer());
         Bukkit.getPluginManager().callEvent(custom);

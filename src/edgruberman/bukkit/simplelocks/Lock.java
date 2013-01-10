@@ -3,18 +3,13 @@ package edgruberman.bukkit.simplelocks;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-/**
- * Sign block that defines access information for the attached block.
- */
+/** sign block that defines access information for the attached block */
 public class Lock {
 
-    public final Locksmith locksmith;
     public final Sign sign;
 
     /**
@@ -22,32 +17,8 @@ public class Lock {
      *
      * @param block sign containing lock information
      */
-    Lock(final Locksmith locksmith, final Block block) {
-        this.locksmith = locksmith;
-        this.sign = (Sign) block.getState();
-    }
-
-    /**
-     * Create new lock in-game
-     *
-     * @param block changed to wall sign containing lock information
-     * @param attached face adjacent to lockable
-     * @param access player name or group name
-     */
-    Lock(final Locksmith locksmith, final Block block, final BlockFace attached, final String access) {
-        this.locksmith = locksmith;
-        final Block locked = block.getRelative(attached);
-        if (this.locksmith.isLocked(locked)) throw new IllegalArgumentException("Block already locked");
-
-        final org.bukkit.material.Sign material = new org.bukkit.material.Sign(Material.WALL_SIGN);
-        material.setFacingDirection(attached.getOppositeFace());
-        block.setTypeIdAndData(material.getItemTypeId(), material.getData(), true);
-        //this.sign.setData(material);
-        this.sign = (Sign) block.getState();
-
-        this.sign.setLine(0, this.locksmith.title);
-
-        this.addAccess(access); // Updates block for previous state changes also
+    Lock(final Sign sign) {
+        this.sign = sign;
     }
 
     public List<String> getAccess() {
