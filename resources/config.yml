@@ -4,12 +4,12 @@ explosion-protection: true
 messages:
     describe: '§f-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§7To add: §b/lock+ §o<Player>§8)''}' # 1 = Access, 2 = hasAccess(0|1)
     denied: '§f-> §7Lock §caccess denied §8(Access: §7{1}§8)' # 1 = Access
-    grant-already: '§f-> §7Lock access §ealready explicitly granted§7 to §o{1}' # 1 = <Name>
+    grant-already: '§f-> §7Lock access §ealready granted§7 explicitly to §o{1}' # 1 = <Name>
     grant-full: '§f-> §7Lock §eunable to grant access §8(§7Access full§8)'
-    grant-success: '§f-> §7Lock §2explicit access granted§7 to §o{1}' # 1 = <Name>
+    grant-success: '§f-> §7Lock §2access granted§7 explicitly to §o{1}' # 1 = <Name>
     revoke-revert: '§f-> §7You §ecan not remove§7 your own access to a lock'
-    revoke-missing: '§f-> §7Lock does §enot explicitly grant access§7 to §o{1}' # 1 = <Name>
-    revoke-success: '§f-> §7Lock §2explicit access revoked§7 from §o{1}' # 1 = <Name>
+    revoke-missing: '§f-> §7Lock does §enot grant access§7 explicitly to §o{1}' # 1 = <Name>
+    revoke-success: '§f-> §7Lock explicit §2access revoked§7 from §o{1}' # 1 = <Name>
     name-too-long: '§f-> §7Lock name §cover {3} characters§7: §o{1} §8(§7{2}§8)' # 1 = <Name>, 2 = Length, 3 = Maximum
     break: '§f-> §7Lock §2broken'
     region-cancel-create: '§f-> §7Locks §ccan not be created§7 in region: {1}' # 1 = Region
