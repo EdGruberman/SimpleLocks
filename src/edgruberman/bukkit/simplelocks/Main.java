@@ -16,12 +16,15 @@ public class Main extends CustomPlugin {
     public static ConfigurationCourier courier;
 
     @Override
-    public void onLoad() { this.putConfigMinimum("3.3.2"); }
+    public void onLoad() {
+        this.putConfigMinimum("3.3.2");
+        this.putConfigMinimum("language.yml", "3.4.0a0");
+    }
 
     @Override
     public void onEnable() {
         this.reloadConfig();
-        Main.courier = ConfigurationCourier.Factory.create(this).setPath("messages").build();
+        Main.courier = ConfigurationCourier.Factory.create(this).setBase(this.loadConfig("language.yml")).setFormatCode("format-code").build();
 
         final String title = this.getConfig().getString("title");
         this.getLogger().config("Lock title: " + title);

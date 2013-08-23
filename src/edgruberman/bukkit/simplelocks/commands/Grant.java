@@ -20,7 +20,7 @@ public class Grant implements CommandExecutor {
         this.locksmith = locksmith;
     }
 
-    // usage: /<command> <Name>
+    // usage: /<command> name
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (!(sender instanceof Player)) {
@@ -29,7 +29,7 @@ public class Grant implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            Main.courier.send(sender, "requires-argument", "<Name>");
+            Main.courier.send(sender, "requires-argument", "name", 0);
             return false;
         }
 
@@ -47,22 +47,22 @@ public class Grant implements CommandExecutor {
 
         final String name = this.locksmith.getSubstitution(Bukkit.getOfflinePlayer(args[0]).getName());
         if (name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.courier.send(sender, "name-too-long", name, name.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
+            Main.courier.send(sender, "grant.length", name, name.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
             return true;
         }
 
         if (lock.hasExplicitAccess(name)) {
-            Main.courier.send(sender, "grant-already", name);
+            Main.courier.send(sender, "grant.already", name);
             return true;
         }
 
         if (lock.getAccess().size() == 3) {
-            Main.courier.send(sender, "grant-full", name);
+            Main.courier.send(sender, "grant.full", name);
             return true;
         }
 
         lock.addAccess(name);
-        Main.courier.send(sender, "grant-success", name);
+        Main.courier.send(sender, "grant.success", name);
         return true;
     }
 

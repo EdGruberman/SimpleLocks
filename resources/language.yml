@@ -1,0 +1,22 @@
+format-code: '§'
+region-cancel-create: '§f-> §7Locks §ccan not be created§7 in region: {1}' # 0 = generated, 1 = region
+denied: '§f-> §7Lock §caccess denied §8(Access: §7{1}§8)' # 0 = generated, 1 = access
+describe:
+  message: '§f-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§7To add: §b/lock+ §3§oplayer§8)''}' # 0 = generated, 1 = access, 2 = hasAccess(0|1)
+  delimiter: '§8, §7'
+grant:
+  success: '§f-> §7Lock §2access granted§7 explicitly to §o{1}' # 0 = generated, 1 = name
+  already: '§f-> §7Lock access §ealready granted§7 explicitly to §o{1}' # 0 = generated, 1 = name
+  full: '§f-> §7Lock §eunable to grant access §8(§7Access full§8)' # 0 = generated
+  length: '§f-> §7Lock name §cover {3} characters§7: §o{1} §8(§7{2}§8)' # 0 = generated, 1 = name, 2 = length, 3 = maximum
+revoke:
+  success: '§f-> §7Lock explicit §2access revoked§7 from §o{1}' # 0 = generated, 1 = name
+  prevent: '§f-> §7You §ecan not remove§7 your own access to a lock'
+  missing: '§f-> §7Lock does §enot grant access§7 explicitly to §o{1}' # 0 = generated, 1 = name
+break: '§f-> §7Lock §2broken'
+reload: '§f-> §2Reloaded §7{1} plugin' # 0 = generated, 1 = plugin name
+requires-access: '§f-> §cOnly players with lock access§7 can use the §b/{1} §7command' # 0 = generated, 1 = label
+requires-lock: '§f-> §eNo lock§7 identified'
+requires-player: '§f-> §cOnly in-game players§7 can use the §b/{1} §7command' # 0 = generated, 1 = label
+requires-argument: '§f-> §cMissing §7required argument§8: §3{2,choice,0#§o|1#§l}{1}' # 0 = generated, 1 = name, 2 = literal(0|1)
+version: @VERSION@

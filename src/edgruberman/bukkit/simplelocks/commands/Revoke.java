@@ -29,7 +29,7 @@ public class Revoke implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            Main.courier.send(sender, "requires-argument", "<Name>");
+            Main.courier.send(sender, "requires-argument", "name", 0);
             return false;
         }
 
@@ -46,24 +46,19 @@ public class Revoke implements CommandExecutor {
         }
 
         final String name = this.locksmith.getSubstitution(Bukkit.getOfflinePlayer(args[0]).getName());
-        if (name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.courier.send(sender, "name-too-long", name, name.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
-            return true;
-        }
-
         if (!lock.hasExplicitAccess(name)) {
-            Main.courier.send(sender, "revoke-missing", name);
+            Main.courier.send(sender, "revoke.missing", name);
             return true;
         }
 
         lock.removeAccess(name);
         if (!lock.hasAccess(player)){
-            Main.courier.send(sender, "revoke-revert");
+            Main.courier.send(sender, "revoke.prevent");
             lock.addAccess(name);
             return true;
         }
 
-        Main.courier.send(sender, "revoke-success", name);
+        Main.courier.send(sender, "revoke.success", name);
         return true;
     }
 

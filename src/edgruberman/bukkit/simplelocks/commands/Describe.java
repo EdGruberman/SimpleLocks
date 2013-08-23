@@ -1,6 +1,7 @@
 package edgruberman.bukkit.simplelocks.commands;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
 import edgruberman.bukkit.simplelocks.Main;
+import edgruberman.bukkit.simplelocks.util.JoinList;
 
 public class Describe implements CommandExecutor {
 
@@ -33,7 +35,8 @@ public class Describe implements CommandExecutor {
             return true;
         }
 
-        Main.courier.send(player, "describe", lock.getAccess().toString().replaceAll("^\\[|\\]$", ""), lock.hasAccess(player)?1:0);
+        final List<String> access = new JoinList<String>(Main.courier.getBase().getConfigurationSection("describe"), lock.getAccess());
+        Main.courier.send(player, "describe.message", access, lock.hasAccess(player)?1:0);
         return true;
     }
 
