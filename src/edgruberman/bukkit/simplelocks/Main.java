@@ -8,7 +8,7 @@ import edgruberman.bukkit.simplelocks.commands.Describe;
 import edgruberman.bukkit.simplelocks.commands.Grant;
 import edgruberman.bukkit.simplelocks.commands.Reload;
 import edgruberman.bukkit.simplelocks.commands.Revoke;
-import edgruberman.bukkit.simplelocks.messaging.ConfigurationCourier;
+import edgruberman.bukkit.simplelocks.messaging.Courier.ConfigurationCourier;
 import edgruberman.bukkit.simplelocks.util.CustomPlugin;
 
 public class Main extends CustomPlugin {
