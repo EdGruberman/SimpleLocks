@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import edgruberman.bukkit.simplelocks.Aliaser;
 import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
 import edgruberman.bukkit.simplelocks.Main;
@@ -15,10 +16,13 @@ import edgruberman.bukkit.simplelocks.Main;
 public class Revoke implements CommandExecutor {
 
     private final Locksmith locksmith;
+    private final Aliaser aliaser;
 
-    public Revoke(final Locksmith locksmith) {
+    public Revoke(final Locksmith locksmith, final Aliaser aliaser) {
         this.locksmith = locksmith;
+        this.aliaser = aliaser;
     }
+
 
     // usage: /<command> <Name>
     @Override
@@ -45,7 +49,7 @@ public class Revoke implements CommandExecutor {
             return true;
         }
 
-        final String name = this.locksmith.getSubstitution(Bukkit.getOfflinePlayer(args[0]).getName());
+        final String name = this.aliaser.getAlias(Bukkit.getOfflinePlayer(args[0]).getName());
         if (!lock.hasExplicitAccess(name)) {
             Main.courier.send(sender, "revoke.missing", name);
             return true;

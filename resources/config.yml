@@ -1,4 +1,11 @@
 log-level: INFO
 title: '§1++ LOCKED ++'
+permissions:
+  - 'server.user.{0}'
+  - 'server.group.{0}'
+auto-alias:
+  enabled: true
+  length: 15
+  prefix: '~'
 explosion-protection: true
 version: @VERSION@

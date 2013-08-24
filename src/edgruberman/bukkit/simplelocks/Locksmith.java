@@ -2,8 +2,6 @@ package edgruberman.bukkit.simplelocks;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -30,13 +28,16 @@ public class Locksmith implements Listener {
 
     /** text on the first line of the sign that indicates it is a lock */
     public final String title;
-    public final Map<String, String> substitutions = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 
     private final Plugin plugin;
+    private final Aliaser aliaser;
+    private final List<String> permissions;
 
-    Locksmith(final Plugin plugin, final String title) {
+    Locksmith(final Plugin plugin, final String title, final Aliaser aliaser, final List<String> permissions) {
         this.plugin = plugin;
         this.title = title;
+        this.aliaser = aliaser;
+        this.permissions = permissions;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -60,7 +61,7 @@ public class Locksmith implements Listener {
         final Sign sign = (Sign) block.getState();
         sign.setLine(0, this.title);
 
-        final Lock lock = new Lock(sign);
+        final Lock lock = new Lock(sign, this.aliaser, this.permissions);
         lock.addAccess(owner); // updates block for previous state changes also
 
         return lock;
@@ -116,10 +117,10 @@ public class Locksmith implements Listener {
      * @return Lock associated with block; null if none
      */
     public Lock findLock(final Block block) {
-        if (this.isLock(block)) return new Lock((Sign) block.getState());
+        if (this.isLock(block)) return new Lock((Sign) block.getState(), this.aliaser, this.permissions);
 
         final Block lock = this.findChestLock(block);
-        if (lock != null) return new Lock((Sign) lock.getState());
+        if (lock != null) return new Lock((Sign) lock.getState(), this.aliaser, this.permissions);
 
         return null;
     }
@@ -152,13 +153,6 @@ public class Locksmith implements Listener {
         return null;
     }
 
-    public String getSubstitution(final String name) {
-        final String substitution = this.substitutions.get(name);
-        if (substitution != null) return substitution;
-
-        return name;
-    }
-
     @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent interaction) {
 
@@ -167,7 +161,7 @@ public class Locksmith implements Listener {
             final Lock lock = this.findLock(interaction.getClickedBlock());
             if (lock == null) return;
 
-            Main.courier.send(interaction.getPlayer(), "describe", lock.getAccess().toString().replaceAll("^\\[|\\]$", ""), lock.hasAccess(interaction.getPlayer())?1:0);
+            Main.courier.send(interaction.getPlayer(), "describe", lock.getAccess(), lock.hasAccess(interaction.getPlayer())?1:0);
             return;
         }
 
@@ -180,7 +174,7 @@ public class Locksmith implements Listener {
             if (!lock.hasAccess(interaction.getPlayer())) {
                 // player does not have access, cancel interaction and notify player
                 interaction.setCancelled(true);
-                Main.courier.send(interaction.getPlayer(), "denied", lock.getAccess().toString().replaceAll("^\\[|\\]$", ""));
+                Main.courier.send(interaction.getPlayer(), "denied", lock.getAccess());
                 this.plugin.getLogger().log(Level.FINEST, "Lock access denied to {0} at {1}", new Object[] { interaction.getPlayer().getName(), interaction.getClickedBlock() });
                 return;
             }
@@ -211,9 +205,9 @@ public class Locksmith implements Listener {
         if (place.isCancelled()) return;
 
         // check for default owner substitute (Long names won't fit on a sign)
-        final String owner = this.getSubstitution(interaction.getPlayer().getName());
+        final String owner = this.aliaser.getAlias(interaction.getPlayer().getName());
         if (owner.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.courier.send(interaction.getPlayer(), "name-too-long", owner, owner.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
+            Main.courier.send(interaction.getPlayer(), "requires-alias", owner, owner.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
             return;
         }
 
@@ -241,7 +235,7 @@ public class Locksmith implements Listener {
         if (lock.hasAccess(broken.getPlayer())) return;
 
         broken.setCancelled(true);
-        Main.courier.send(broken.getPlayer(), "denied", lock.getAccess().toString().replaceAll("^\\[|\\]$", ""));
+        Main.courier.send(broken.getPlayer(), "denied", lock.getAccess());
         this.plugin.getLogger().log(Level.FINEST, "Cancelled block break by {0} to protect lock at {1}", new Object[] { broken.getPlayer().getName(), broken.getBlock() });
 
         lock.sign.update();

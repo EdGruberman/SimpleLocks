@@ -1,29 +1,35 @@
 package edgruberman.bukkit.simplelocks;
 
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
+import edgruberman.bukkit.simplelocks.util.JoinList;
+
 /** sign block that defines access information for the attached block */
 public class Lock {
 
     public final Sign sign;
+    private final Aliaser aliaser;
+    private final List<String> permissions;
 
     /**
      * Existing lock
      *
      * @param block sign containing lock information
      */
-    Lock(final Sign sign) {
+    Lock(final Sign sign, final Aliaser aliaser, final List<String> permissions) {
         this.sign = sign;
+        this.aliaser = aliaser;
+        this.permissions = permissions;
     }
 
     public List<String> getAccess() {
         final String[] lines = this.sign.getLines();
-        final List<String> access = new ArrayList<String>();
+        final List<String> access = new JoinList<String>(Main.courier.getBase().getConfigurationSection("access"));
         for (int i = 1; i <= 3; i++)
             if (lines[i].length() > 0)
                 access.add(lines[i]);
@@ -101,9 +107,13 @@ public class Lock {
         if (this.hasExplicitAccess(player.getName())) return true;
 
         // permissions must be explicitly set to true to avoid default ops getting access due to permission that doesn't exist
-        for (final String line : this.getAccess())
-            if (player.isPermissionSet(line) && player.hasPermission(line))
-                return true;
+        for (final String line : this.getAccess()) {
+            final String name = this.aliaser.getName(line); // convert alias to name
+            for (final String permission : this.permissions) {
+                final String formatted = MessageFormat.format(permission, name);
+                if (player.isPermissionSet(formatted) && player.hasPermission(formatted)) return true;
+            }
+        }
 
         return false;
     }

@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import edgruberman.bukkit.simplelocks.Aliaser;
 import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
 import edgruberman.bukkit.simplelocks.Main;
@@ -15,9 +16,11 @@ import edgruberman.bukkit.simplelocks.Main;
 public class Grant implements CommandExecutor {
 
     private final Locksmith locksmith;
+    private final Aliaser aliaser;
 
-    public Grant(final Locksmith locksmith) {
+    public Grant(final Locksmith locksmith, final Aliaser aliaser) {
         this.locksmith = locksmith;
+        this.aliaser = aliaser;
     }
 
     // usage: /<command> name
@@ -45,9 +48,9 @@ public class Grant implements CommandExecutor {
             return true;
         }
 
-        final String name = this.locksmith.getSubstitution(Bukkit.getOfflinePlayer(args[0]).getName());
+        final String name = this.aliaser.getAlias(Bukkit.getOfflinePlayer(args[0]).getName());
         if (name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.courier.send(sender, "grant.length", name, name.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
+            Main.courier.send(sender, "requires-alias", name, name.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
             return true;
         }
 

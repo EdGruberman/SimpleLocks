@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <project name="Bukkit plugin" default="default">
-  <description>Bukkit plugin standard build management v6.0.1</description>
+  <description>Bukkit plugin standard build management v6.0.2</description>
   <tstamp><format property="build.start" pattern="yyyy-MM-dd HH:mm:ss z" timezone="UTC" /></tstamp>
 
 
@@ -12,6 +12,7 @@
   <property name="resources.dir" location="resources" />
   <property name="build.dir" location="build" />
   <property name="dist.dir" location="dist" />
+  <property name="lib.dir" location="lib" />
 
   <property name="version.properties" location="version.properties" />
   <available file="${version.properties}" property="version.available" />
