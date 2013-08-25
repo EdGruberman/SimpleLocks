@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import edgruberman.bukkit.simplelocks.util.BufferedYamlConfiguration;
 
@@ -19,8 +19,8 @@ public class Aliaser implements Listener {
     private final BufferedYamlConfiguration repository;
     private final int length;
     private final String prefix;
-    private final Map<String, String> aliases = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER); // player name, alias
-    private final Map<String, String> names = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER); // alias, player name
+    private final Map<String, String> nameToAlias = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER); // player name, alias
+    private final Map<String, String> aliasToName = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER); // alias, player name
 
     Aliaser(final Logger logger, final BufferedYamlConfiguration repository, final int length, final String prefix) {
         this.logger = logger;
@@ -29,46 +29,49 @@ public class Aliaser implements Listener {
         this.prefix = prefix;
 
         for (final String name : repository.getKeys(false)) {
-            this.aliases.put(name, repository.getString(name));
+            this.nameToAlias.put(name, repository.getString(name));
+            this.aliasToName.put(repository.getString(name), name);
         }
     }
 
     public String getAlias(final String name) {
-        final String result = this.aliases.get(name);
+        final String result = this.nameToAlias.get(name);
         return ( result != null ? result : name );
     }
 
     public String getName(final String alias) {
-        final String result = this.names.get(alias);
+        final String result = this.aliasToName.get(alias);
         return ( result != null ? result : alias );
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onPlayerLogin(final PlayerLoginEvent login) {
-        if (login.getPlayer().getName().length() <= this.length) return;
-        if (this.aliases.containsKey(login.getPlayer().getName())) return;
+    public void onPlayerLogin(final PlayerJoinEvent join) {
+        if (join.getPlayer().getName().length() <= this.length) return;
+        if (this.nameToAlias.containsKey(join.getPlayer().getName())) return;
 
-        String alias = this.prefix + login.getPlayer().getName();
+        String alias = this.prefix + join.getPlayer().getName();
         alias = alias.substring(0, Math.min(alias.length(), this.length));
 
         // append number when conflict
-        if (this.aliases.containsKey(alias)) {
+        if (this.nameToAlias.containsValue(alias)) {
             String found = null;
             for (int i = 1; i < Aliaser.MAXIMUM_TRIES; i++) {
                 final String numbered = alias.substring(0, Math.min(alias.length(), this.length - String.valueOf(i).length())) + String.valueOf(i);
-                if (!this.aliases.containsKey(alias)) {
+                if (!this.nameToAlias.containsValue(numbered)) {
                     found = numbered;
                     break;
                 }
             }
-            if (found == null) throw new IllegalStateException("Unable to find available alias for " + login.getPlayer().getName());
+            if (found == null) throw new IllegalStateException("Unable to find available alias for " + join.getPlayer().getName());
             alias = found;
         }
 
-        this.aliases.put(login.getPlayer().getName(), alias);
+        this.nameToAlias.put(join.getPlayer().getName(), alias);
+        this.aliasToName.put(alias, join.getPlayer().getName());
+        this.repository.set(join.getPlayer().getName(), alias);
         this.repository.queueSave();
 
-        this.logger.log(Level.FINER, "Created {0} alias for {1}", new Object[]{ alias, login.getPlayer().getName() });
+        this.logger.log(Level.FINER, "Created {0} alias for {1}", new Object[]{ alias, join.getPlayer().getName() });
     }
 
 }

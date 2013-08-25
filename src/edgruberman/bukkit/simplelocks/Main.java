@@ -13,6 +13,7 @@ import edgruberman.bukkit.simplelocks.commands.Revoke;
 import edgruberman.bukkit.simplelocks.messaging.Courier.ConfigurationCourier;
 import edgruberman.bukkit.simplelocks.util.BufferedYamlConfiguration;
 import edgruberman.bukkit.simplelocks.util.CustomPlugin;
+import edgruberman.bukkit.simplelocks.util.Feedback;
 
 public class Main extends CustomPlugin {
 
@@ -22,6 +23,7 @@ public class Main extends CustomPlugin {
     public void onLoad() {
         this.putConfigMinimum("3.4.0a0");
         this.putConfigMinimum("language.yml", "3.4.0a0");
+        Feedback.register(this, this.getServer().getScheduler());
     }
 
     @Override

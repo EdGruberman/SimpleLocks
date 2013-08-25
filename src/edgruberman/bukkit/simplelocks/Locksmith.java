@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -218,11 +220,15 @@ public class Locksmith implements Listener {
         if (custom.isCancelled()) return;
 
         // remove only 1 sign from player's hand
-        remaining.setAmount(remaining.getAmount() - 1);
-        interaction.getPlayer().setItemInHand(remaining);
+        if (interaction.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            remaining.setAmount(remaining.getAmount() - 1);
+            interaction.getPlayer().setItemInHand(remaining);
+        }
 
         this.createLock(block, attached, owner);
         interaction.setUseInteractedBlock(Result.DENY); // don't open the chest
+
+        interaction.getPlayer().playSound(interaction.getPlayer().getLocation(), Sound.DIG_WOOD, 1.0F, 1.0F);
     }
 
     /** cancel block break if lock/locked and not owner */

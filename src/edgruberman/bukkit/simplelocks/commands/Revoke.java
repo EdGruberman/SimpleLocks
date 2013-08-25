@@ -12,6 +12,7 @@ import edgruberman.bukkit.simplelocks.Aliaser;
 import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
 import edgruberman.bukkit.simplelocks.Main;
+import edgruberman.bukkit.simplelocks.util.Feedback;
 
 public class Revoke implements CommandExecutor {
 
@@ -23,7 +24,6 @@ public class Revoke implements CommandExecutor {
         this.aliaser = aliaser;
     }
 
-
     // usage: /<command> <Name>
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
@@ -32,26 +32,31 @@ public class Revoke implements CommandExecutor {
             return true;
         }
 
+        final Player player = (Player) sender;
+
         if (args.length < 1) {
             Main.courier.send(sender, "requires-argument", "name", 0);
+            Feedback.COMMAND_RESULT_FAILURE.send(player);
             return false;
         }
 
-        final Player player = (Player) sender;
         final Lock lock = this.locksmith.findLock(player.getTargetBlock((HashSet<Byte>) null, 4));
         if (lock == null) {
             Main.courier.send(sender, "requires-lock");
+            Feedback.COMMAND_RESULT_WARNING.send(player);
             return true;
         }
 
         if (!lock.hasAccess(player)) {
             Main.courier.send(sender, "requires-access", label, lock.getAccess());
+            Feedback.COMMAND_RESULT_FAILURE.send(player);
             return true;
         }
 
         final String name = this.aliaser.getAlias(Bukkit.getOfflinePlayer(args[0]).getName());
         if (!lock.hasExplicitAccess(name)) {
             Main.courier.send(sender, "revoke.missing", name);
+            Feedback.COMMAND_RESULT_WARNING.send(player);
             return true;
         }
 
@@ -59,10 +64,12 @@ public class Revoke implements CommandExecutor {
         if (!lock.hasAccess(player)){
             Main.courier.send(sender, "revoke.prevent");
             lock.addAccess(name);
+            Feedback.COMMAND_RESULT_WARNING.send(player);
             return true;
         }
 
         Main.courier.send(sender, "revoke.success", name);
+        Feedback.COMMAND_RESULT_SUCCESS.send(player);
         return true;
     }
 
