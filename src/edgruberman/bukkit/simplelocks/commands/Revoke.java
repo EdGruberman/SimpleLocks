@@ -48,12 +48,12 @@ public class Revoke implements CommandExecutor {
         }
 
         if (!lock.hasAccess(player)) {
-            Main.courier.send(sender, "requires-access", label, lock.getAccess());
+            Main.courier.send(sender, "requires-access", label, lock.accessNames());
             Feedback.COMMAND_RESULT_FAILURE.send(player);
             return true;
         }
 
-        final String name = this.aliaser.getAlias(Bukkit.getOfflinePlayer(args[0]).getName());
+        final String name = this.aliaser.alias(Bukkit.getOfflinePlayer(args[0]).getName());
         if (!lock.hasExplicitAccess(name)) {
             Main.courier.send(sender, "revoke.missing", name);
             Feedback.COMMAND_RESULT_WARNING.send(player);

@@ -53,7 +53,7 @@ public class Grant implements CommandExecutor {
             return true;
         }
 
-        final String name = this.aliaser.getAlias(Bukkit.getOfflinePlayer(args[0]).getName());
+        final String name = this.aliaser.alias(Bukkit.getOfflinePlayer(args[0]).getName());
         if (name.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
             Main.courier.send(sender, "requires-alias", name, name.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
             Feedback.COMMAND_RESULT_FAILURE.send(player);

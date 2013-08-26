@@ -5,6 +5,7 @@ import java.util.logging.Level;
 
 import org.bukkit.event.HandlerList;
 
+import edgruberman.bukkit.simplelocks.commands.Alias;
 import edgruberman.bukkit.simplelocks.commands.Break;
 import edgruberman.bukkit.simplelocks.commands.Describe;
 import edgruberman.bukkit.simplelocks.commands.Grant;
@@ -22,7 +23,7 @@ public class Main extends CustomPlugin {
     @Override
     public void onLoad() {
         this.putConfigMinimum("3.4.0a0");
-        this.putConfigMinimum("language.yml", "3.4.0a0");
+        this.putConfigMinimum("language.yml", "3.4.0b2");
         Feedback.register(this, this.getServer().getScheduler());
     }
 
@@ -62,6 +63,7 @@ public class Main extends CustomPlugin {
         this.getCommand("simplelocks:describe").setExecutor(new Describe(locksmith));
         this.getCommand("simplelocks:grant").setExecutor(new Grant(locksmith, aliaser));
         this.getCommand("simplelocks:revoke").setExecutor(new Revoke(locksmith, aliaser));
+        this.getCommand("simplelocks:alias").setExecutor(new Alias(aliaser));
         this.getCommand("simplelocks:break").setExecutor(new Break(locksmith));
         this.getCommand("simplelocks:reload").setExecutor(new Reload(this));
     }

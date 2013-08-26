@@ -38,6 +38,8 @@ public class Break implements CommandExecutor {
             return true;
         }
 
+        sender.getServer().dispatchCommand(sender, "simplelocks:describe");
+
         lock.sign.setType(Material.AIR);
         lock.sign.update(true);
         lock.sign.getWorld().dropItemNaturally(lock.sign.getLocation(), new ItemStack(Material.SIGN, 1));

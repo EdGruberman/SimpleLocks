@@ -21,6 +21,11 @@ commands:
         description: Remove access entry
         permission: simplelocks.revoke
         usage: '§f-> §7Usage: §b/<command> §3§oname'
+    'simplelocks:alias':
+        aliases: [lock.alias, alias]
+        description: Show alias for player and vice versa
+        permission: simplelocks.alias
+        usage: '§f-> §7Usage: §b/<command> §3[§oplayer§3|§oalias§3]'
     'simplelocks:break':
         aliases: [lock.break]
         description: Remove lock
@@ -39,6 +44,7 @@ permissions:
             simplelocks.describe: true
             simplelocks.grant: true
             simplelocks.revoke: true
+            simplelocks.alias: true
     simplelocks.admin:
         description: Can use administrative features of SimpleLocks plugin
         default: op
@@ -58,6 +64,9 @@ permissions:
         default: false
     simplelocks.revoke:
         description: Can use revoke command * requires lock access
+        default: false
+    simplelocks.alias:
+        description: Can use alias command
         default: false
     simplelocks.break:
         description: Can use break command

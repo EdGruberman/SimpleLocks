@@ -27,6 +27,18 @@ public class Lock {
         this.permissions = permissions;
     }
 
+    public List<String> accessNames() {
+        final List<String> result = this.getAccess();
+
+        for (int i = 0; i < result.size(); i++) {
+            final String alias = result.get(i);
+            final String name = this.aliaser.name(alias);
+            result.set(i, name);
+        }
+
+        return result;
+    }
+
     public List<String> getAccess() {
         final String[] lines = this.sign.getLines();
         final List<String> access = new JoinList<String>(Main.courier.getBase().getConfigurationSection("access"));
@@ -108,7 +120,7 @@ public class Lock {
 
         // permissions must be explicitly set to true to avoid default ops getting access due to permission that doesn't exist
         for (final String line : this.getAccess()) {
-            final String name = this.aliaser.getName(line); // convert alias to name
+            final String name = this.aliaser.name(line); // convert alias to name
             for (final String permission : this.permissions) {
                 final String formatted = MessageFormat.format(permission, name);
                 if (player.isPermissionSet(formatted) && player.hasPermission(formatted)) return true;

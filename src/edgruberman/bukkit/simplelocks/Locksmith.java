@@ -163,7 +163,7 @@ public class Locksmith implements Listener {
             final Lock lock = this.findLock(interaction.getClickedBlock());
             if (lock == null) return;
 
-            Main.courier.send(interaction.getPlayer(), "describe", lock.getAccess(), lock.hasAccess(interaction.getPlayer())?1:0);
+            Main.courier.send(interaction.getPlayer(), "describe", lock.accessNames(), lock.hasAccess(interaction.getPlayer())?1:0);
             return;
         }
 
@@ -176,7 +176,8 @@ public class Locksmith implements Listener {
             if (!lock.hasAccess(interaction.getPlayer())) {
                 // player does not have access, cancel interaction and notify player
                 interaction.setCancelled(true);
-                Main.courier.send(interaction.getPlayer(), "denied", lock.getAccess());
+                Main.courier.send(interaction.getPlayer(), "denied", lock.accessNames());
+                interaction.getPlayer().playSound(interaction.getPlayer().getLocation(), Sound.ITEM_BREAK, 1.0F, 1.0F);
                 this.plugin.getLogger().log(Level.FINEST, "Lock access denied to {0} at {1}", new Object[] { interaction.getPlayer().getName(), interaction.getClickedBlock() });
                 return;
             }
@@ -207,7 +208,7 @@ public class Locksmith implements Listener {
         if (place.isCancelled()) return;
 
         // check for default owner substitute (Long names won't fit on a sign)
-        final String owner = this.aliaser.getAlias(interaction.getPlayer().getName());
+        final String owner = this.aliaser.alias(interaction.getPlayer().getName());
         if (owner.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
             Main.courier.send(interaction.getPlayer(), "requires-alias", owner, owner.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
             return;
@@ -241,7 +242,7 @@ public class Locksmith implements Listener {
         if (lock.hasAccess(broken.getPlayer())) return;
 
         broken.setCancelled(true);
-        Main.courier.send(broken.getPlayer(), "denied", lock.getAccess());
+        Main.courier.send(broken.getPlayer(), "denied", lock.accessNames());
         this.plugin.getLogger().log(Level.FINEST, "Cancelled block break by {0} to protect lock at {1}", new Object[] { broken.getPlayer().getName(), broken.getBlock() });
 
         lock.sign.update();

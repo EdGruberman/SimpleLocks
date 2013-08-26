@@ -29,17 +29,26 @@ public class Aliaser implements Listener {
         this.prefix = prefix;
 
         for (final String name : repository.getKeys(false)) {
-            this.nameToAlias.put(name, repository.getString(name));
-            this.aliasToName.put(repository.getString(name), name);
+            final String alias = repository.getString(name);
+            this.nameToAlias.put(name, alias);
+            this.aliasToName.put(alias, name);
         }
     }
 
     public String getAlias(final String name) {
+        return this.nameToAlias.get(name);
+    }
+
+    public String alias(final String name) {
         final String result = this.nameToAlias.get(name);
         return ( result != null ? result : name );
     }
 
     public String getName(final String alias) {
+        return this.aliasToName.get(alias);
+    }
+
+    public String name(final String alias) {
         final String result = this.aliasToName.get(alias);
         return ( result != null ? result : alias );
     }
@@ -68,6 +77,7 @@ public class Aliaser implements Listener {
 
         this.nameToAlias.put(join.getPlayer().getName(), alias);
         this.aliasToName.put(alias, join.getPlayer().getName());
+
         this.repository.set(join.getPlayer().getName(), alias);
         this.repository.queueSave();
 

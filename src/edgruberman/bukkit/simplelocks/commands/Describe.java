@@ -33,7 +33,7 @@ public class Describe implements CommandExecutor {
             return true;
         }
 
-        Main.courier.send(player, "describe", lock.getAccess(), lock.hasAccess(player)?1:0);
+        Main.courier.send(player, "describe", lock.accessNames(), lock.hasAccess(player)?1:0);
         return true;
     }
 

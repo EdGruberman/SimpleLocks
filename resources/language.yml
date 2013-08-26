@@ -3,15 +3,19 @@ region-cancel-create: '§f-> §7Locks §ccan not be created§7 in region: §f{1}
 access:
   delimiter: '§8, §7'
 denied: '§f-> §7Lock §caccess denied §8(Access: §7{1}§8)' # 0 = generated, 1 = access
-describe: '§f-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§7To add: §b/lock+ §3§oplayer§8)''}' # 0 = generated, 1 = access, 2 = hasAccess(0|1)
+describe: '§f-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§7To add: §b/lock+ §3§oname§8)''}' # 0 = generated, 1 = access, 2 = hasAccess(0|1)
 grant:
   success: '§f-> §7Lock §2access granted§7 explicitly to §f{1}' # 0 = generated, 1 = name
   already: '§f-> §7Lock access §ealready granted§7 explicitly to §f{1}' # 0 = generated, 1 = name
-  full: '§f-> §7Lock §eunable to grant access §8(§7Access full§8)' # 0 = generated
+  full: '§f-> §7Lock §caccess full' # 0 = generated
 revoke:
   success: '§f-> §7Lock explicit §2access revoked§7 from §f{1}' # 0 = generated, 1 = name
   prevent: '§f-> §7You §ecan not remove§7 your own access to a lock'
-  missing: '§f-> §7Lock does §enot grant access§7 explicitly to §f{1}' # 0 = generated, 1 = name
+  missing: '§f-> §7Lock access §enot explicitly granted §7to §f{1}' # 0 = generated, 1 = name
+alias:
+  alias: '§f-> §7Alias for §f{1} §7is §f{2}' # 0 = generated, 1 = name, 2 = alias
+  player:  '§f-> §7Player for §f{1} §7is §f{2}' # 0 = generated, 1 = name, 2 = player
+  none: '§f-> §7No alias or player found for §f{1}' # 0 = generated, 1 = name
 break: '§f-> §7Lock §2broken'
 reload: '§f-> §2Reloaded §7{1} plugin' # 0 = generated, 1 = plugin name
 requires-alias: '§f-> §7Alias required for names §cover {3} characters§7: §f{1} §8(§7{2}§8)' # 0 = generated, 1 = name, 2 = length, 3 = maximum
