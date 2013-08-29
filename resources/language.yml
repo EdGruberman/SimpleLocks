@@ -3,7 +3,7 @@ region-cancel-create: '§f-> §7Locks §ccan not be created§7 in region: §f{1}
 access:
   delimiter: '§8, §7'
 denied: '§f-> §7Lock §caccess denied §8(Access: §7{1}§8)' # 0 = generated, 1 = access
-describe: '§f-> {2,choice,0#§e|1#§2}Lock Access§7: {1}{2,choice,0#|1#'' §8(§7To add: §b/lock+ §3§oname§8)''}' # 0 = generated, 1 = access, 2 = hasAccess(0|1)
+describe: '§f-> {2,choice,0#§e|1#§2}Lock Access§8: §7{1}{2,choice,0#|1#'' §8(§7To add: §b/lock+ §3§oname§8)''}' # 0 = generated, 1 = access, 2 = hasAccess(0|1)
 grant:
   success: '§f-> §7Lock §2access granted§7 explicitly to §f{1}' # 0 = generated, 1 = name
   already: '§f-> §7Lock access §ealready granted§7 explicitly to §f{1}' # 0 = generated, 1 = name
