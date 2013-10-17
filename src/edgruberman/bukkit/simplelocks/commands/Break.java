@@ -27,6 +27,8 @@ public class Break extends FeedbackExecutor {
     @Override
     protected boolean executeImplementation(final ExecutionRequest request) throws CancellationContingency {
         final Player player = (Player) request.getSender();
+
+        @SuppressWarnings("deprecation") // no valid alternative
         final Lock lock = this.locksmith.findLock(player.getTargetBlock((HashSet<Byte>) null, 4));
         if (lock == null) {
             this.courier.send(request.getSender(), "requires-lock");

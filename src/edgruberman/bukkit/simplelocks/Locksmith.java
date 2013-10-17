@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.event.Event.Result;
@@ -61,7 +62,10 @@ public class Locksmith implements Listener {
         // configure material
         final org.bukkit.material.Sign material = new org.bukkit.material.Sign(Material.WALL_SIGN);
         material.setFacingDirection(attached.getOppositeFace());
-        block.setTypeIdAndData(material.getItemTypeId(), material.getData(), true);
+        final BlockState state = block.getState();
+        state.setType(material.getItemType());
+        state.setData(material);
+        state.update(true);
 
         // change first line to lock title
         final Sign sign = (Sign) block.getState();
@@ -92,7 +96,7 @@ public class Locksmith implements Listener {
      */
     private boolean isLock(final Block block, final BlockFace attached) {
         // Locks must be a wall sign
-        if (block.getTypeId() != Material.WALL_SIGN.getId()) return false;
+        if (block.getType() != Material.WALL_SIGN) return false;
 
         // Locks must be directly attached to locked block
         if (attached != null) {
@@ -138,13 +142,13 @@ public class Locksmith implements Listener {
      * @return Block containing lock associated to chest; null if none
      */
     private Block findChestLock(final Block chest) {
-        if (chest.getTypeId() != Material.CHEST.getId()) return null;
+        if (chest.getType() != Material.CHEST) return null;
 
         // check directly adjacent blocks for lock
         for (final BlockFace direction : Locksmith.CARDINALS) {
             final Block relative = chest.getRelative(direction);
 
-            if (relative.getTypeId() == Material.CHEST.getId()) {
+            if (relative.getType() == Material.CHEST) {
                 // found double chest - check directly adjacent blocks to second half of chest for lock
                 for (final BlockFace direction2 : Locksmith.CARDINALS) {
                     final Block relative2 = relative.getRelative(direction2);
