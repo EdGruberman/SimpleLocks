@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
 <project name="Bukkit plugin" default="default">
   <description>Bukkit plugin standard build management v6.0.2</description>
   <tstamp><format property="build.start" pattern="yyyy-MM-dd HH:mm:ss z" timezone="UTC" /></tstamp>
