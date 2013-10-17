@@ -6,74 +6,74 @@ website: http://github.com/EdGruberman/SimpleLocks
 main: edgruberman.bukkit.simplelocks.Main
 loadbefore: [SimpleRegions]
 commands:
-    'simplelocks:describe':
-        aliases: [lock.describe, lock, 'lock?', 'l?']
-        description: Show lock information
-        permission: simplelocks.describe
-        usage: '§f-> §7Usage: §b/<command>'
-    'simplelocks:grant':
-        aliases: [lock.grant, lock+, l+]
-        description: Add access entry
-        permission: simplelocks.grant
-        usage: '§f-> §7Usage: §b/<command> §3§oname'
-    'simplelocks:revoke':
-        aliases: [lock.revoke, lock-, l-]
-        description: Remove access entry
-        permission: simplelocks.revoke
-        usage: '§f-> §7Usage: §b/<command> §3§oname'
-    'simplelocks:alias':
-        aliases: [lock.alias, alias]
-        description: Show alias for player and vice versa
-        permission: simplelocks.alias
-        usage: '§f-> §7Usage: §b/<command> §3[§oplayer§3|§oalias§3]'
-    'simplelocks:break':
-        aliases: [lock.break]
-        description: Remove lock
-        permission: simplelocks.break
-        usage: '§f-> §7Usage: §b/<command>'
-    'simplelocks:reload':
-        description: Reload plugin configuration
-        permission: simplelocks.reload
-        usage: '§f-> §7Usage: §b/<command>'
+  'simplelocks:describe':
+    aliases: [lock.describe, lock, 'lock?', 'l?']
+    description: Show lock information
+    permission: simplelocks.describe
+    usage: '§f-> §7Usage: §b/<command>'
+  'simplelocks:grant':
+    aliases: [lock.grant, lock+, l+]
+    description: Add access entry
+    permission: simplelocks.grant
+    usage: '§f-> §7Usage: §b/<command> §3§oname'
+  'simplelocks:revoke':
+    aliases: [lock.revoke, lock-, l-]
+    description: Remove access entry
+    permission: simplelocks.revoke
+    usage: '§f-> §7Usage: §b/<command> §3§oname'
+  'simplelocks:alias':
+    aliases: [lock.alias, alias]
+    description: Show alias for player and vice versa
+    permission: simplelocks.alias
+    usage: '§f-> §7Usage: §b/<command> §3[§oplayer§3|§oalias§3]'
+  'simplelocks:break':
+    aliases: [lock.break]
+    description: Remove lock
+    permission: simplelocks.break
+    usage: '§f-> §7Usage: §b/<command>'
+  'simplelocks:reload':
+    description: Reload plugin configuration
+    permission: simplelocks.reload
+    usage: '§f-> §7Usage: §b/<command>'
 permissions:
-    simplelocks.user:
-        description: Can create new locks and edit accessible locks
-        default: true
-        children:
-            simplelocks.create: true
-            simplelocks.describe: true
-            simplelocks.grant: true
-            simplelocks.revoke: true
-            simplelocks.alias: true
-    simplelocks.admin:
-        description: Can use administrative features of SimpleLocks plugin
-        default: op
-        children:
-            simplelocks.user: true
-            simplelocks.break: true
-            simplelocks.override: true
-            simplelocks.reload: true
-    simplelocks.create:
-        description: Can create new locks
-        default: false
-    simplelocks.describe:
-        description: Can use describe command
-        default: false
-    simplelocks.grant:
-        description: Can use grant command * requires lock access
-        default: false
-    simplelocks.revoke:
-        description: Can use revoke command * requires lock access
-        default: false
-    simplelocks.alias:
-        description: Can use alias command
-        default: false
-    simplelocks.break:
-        description: Can use break command
-        default: false
-    simplelocks.override:
-        description: Can access and edit any lock
-        default: false
-    simplelocks.reload:
-        description: Can use reload command
-        default: false
+  simplelocks.user:
+    description: Can create new locks and edit accessible locks
+    default: true
+    children:
+      simplelocks.create: true
+      simplelocks.describe: true
+      simplelocks.grant: true
+      simplelocks.revoke: true
+      simplelocks.alias: true
+  simplelocks.admin:
+    description: Can use administrative features of SimpleLocks plugin
+    default: op
+    children:
+      simplelocks.user: true
+      simplelocks.break: true
+      simplelocks.override: true
+      simplelocks.reload: true
+  simplelocks.create:
+    description: Can create new locks
+    default: false
+  simplelocks.describe:
+    description: Can use describe command
+    default: false
+  simplelocks.grant:
+    description: Can use grant command * requires lock access
+    default: false
+  simplelocks.revoke:
+    description: Can use revoke command * requires lock access
+    default: false
+  simplelocks.alias:
+    description: Can use alias command
+    default: false
+  simplelocks.break:
+    description: Can use break command
+    default: false
+  simplelocks.override:
+    description: Can access and edit any lock
+    default: false
+  simplelocks.reload:
+    description: Can use reload command
+    default: false

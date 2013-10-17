@@ -1,74 +1,71 @@
 package edgruberman.bukkit.simplelocks.commands;
 
 import java.util.HashSet;
+import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import edgruberman.bukkit.simplelocks.Aliaser;
 import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
-import edgruberman.bukkit.simplelocks.Main;
+import edgruberman.bukkit.simplelocks.commands.util.CancellationContingency;
+import edgruberman.bukkit.simplelocks.commands.util.ExecutionRequest;
+import edgruberman.bukkit.simplelocks.commands.util.FeedbackExecutor;
+import edgruberman.bukkit.simplelocks.commands.util.OfflinePlayerParameter;
+import edgruberman.bukkit.simplelocks.messaging.Courier.ConfigurationCourier;
 import edgruberman.bukkit.simplelocks.util.Feedback;
 
-public class Revoke implements CommandExecutor {
+public class Revoke extends FeedbackExecutor {
 
     private final Locksmith locksmith;
     private final Aliaser aliaser;
 
-    public Revoke(final Locksmith locksmith, final Aliaser aliaser) {
+    private final OfflinePlayerParameter name;
+
+    public Revoke(final ConfigurationCourier courier, final Server server, final Locksmith locksmith, final Aliaser aliaser) {
+        super(courier);
         this.locksmith = locksmith;
         this.aliaser = aliaser;
+
+        this.name = this.addRequired(OfflinePlayerParameter.Factory.create("name", server));
     }
 
-    // usage: /<command> <Name>
+    // usage: /<command> name
     @Override
-    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-        if (!(sender instanceof Player)) {
-            Main.courier.send(sender, "requires-player");
-            return true;
-        }
-
-        final Player player = (Player) sender;
-
-        if (args.length < 1) {
-            Main.courier.send(sender, "requires-argument", "name", 0);
-            Feedback.COMMAND_RESULT_FAILURE.send(player);
-            return false;
-        }
+    protected boolean executeImplementation(final ExecutionRequest request) throws CancellationContingency {
+        final Player player = (Player) request.getSender();
 
         final Lock lock = this.locksmith.findLock(player.getTargetBlock((HashSet<Byte>) null, 4));
         if (lock == null) {
-            Main.courier.send(sender, "requires-lock");
-            Feedback.COMMAND_RESULT_WARNING.send(player);
+            this.courier.send(request.getSender(), "requires-lock");
+            Feedback.COMMAND_RESULT_FAILURE.send(player);
             return true;
         }
 
         if (!lock.hasAccess(player)) {
-            Main.courier.send(sender, "requires-access", label, lock.accessNames());
+            final List<String> names = this.<String>joinFactory().prefix("access-").elements(lock.accessNames()).build();
+            this.courier.send(request.getSender(), "requires-access", request.getLabel(), names);
             Feedback.COMMAND_RESULT_FAILURE.send(player);
             return true;
         }
 
-        final String name = this.aliaser.alias(Bukkit.getOfflinePlayer(args[0]).getName());
+        final String name = this.aliaser.alias(request.parse(this.name).getName());
         if (!lock.hasExplicitAccess(name)) {
-            Main.courier.send(sender, "revoke.missing", name);
+            this.courier.send(request.getSender(), "revoke-missing", name);
             Feedback.COMMAND_RESULT_WARNING.send(player);
             return true;
         }
 
         lock.removeAccess(name);
         if (!lock.hasAccess(player)){
-            Main.courier.send(sender, "revoke.prevent");
+            this.courier.send(request.getSender(), "revoke-prevent");
             lock.addAccess(name);
             Feedback.COMMAND_RESULT_WARNING.send(player);
             return true;
         }
 
-        Main.courier.send(sender, "revoke.success", name);
+        this.courier.send(request.getSender(), "revoke-success", name);
         Feedback.COMMAND_RESULT_SUCCESS.send(player);
         return true;
     }

@@ -3,6 +3,7 @@ package edgruberman.bukkit.simplelocks;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -20,7 +21,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
+
+import edgruberman.bukkit.simplelocks.commands.util.ConfigurationJoinListFactory;
+import edgruberman.bukkit.simplelocks.messaging.Courier.ConfigurationCourier;
 
 public class Locksmith implements Listener {
 
@@ -31,16 +34,17 @@ public class Locksmith implements Listener {
     /** text on the first line of the sign that indicates it is a lock */
     public final String title;
 
-    private final Plugin plugin;
+    private final ConfigurationCourier courier;
+    private final Logger logger;
     private final Aliaser aliaser;
     private final List<String> permissions;
 
-    Locksmith(final Plugin plugin, final String title, final Aliaser aliaser, final List<String> permissions) {
-        this.plugin = plugin;
+    Locksmith(final ConfigurationCourier courier, final Logger logger, final String title, final Aliaser aliaser, final List<String> permissions) {
+        this.courier = courier;
+        this.logger = logger;
         this.title = title;
         this.aliaser = aliaser;
         this.permissions = permissions;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**
@@ -163,7 +167,8 @@ public class Locksmith implements Listener {
             final Lock lock = this.findLock(interaction.getClickedBlock());
             if (lock == null) return;
 
-            Main.courier.send(interaction.getPlayer(), "describe", lock.accessNames(), lock.hasAccess(interaction.getPlayer())?1:0);
+            final List<String> names = ConfigurationJoinListFactory.<String>create().config(this.courier.getBase()).prefix("access-").elements(lock.accessNames()).build();
+            this.courier.send(interaction.getPlayer(), "describe", names, lock.hasAccess(interaction.getPlayer())?1:0);
             return;
         }
 
@@ -176,9 +181,9 @@ public class Locksmith implements Listener {
             if (!lock.hasAccess(interaction.getPlayer())) {
                 // player does not have access, cancel interaction and notify player
                 interaction.setCancelled(true);
-                Main.courier.send(interaction.getPlayer(), "denied", lock.accessNames());
+                this.courier.send(interaction.getPlayer(), "denied", lock.accessNames());
                 interaction.getPlayer().playSound(interaction.getPlayer().getLocation(), Sound.ITEM_BREAK, 1.0F, 1.0F);
-                this.plugin.getLogger().log(Level.FINEST, "Lock access denied to {0} at {1}", new Object[] { interaction.getPlayer().getName(), interaction.getClickedBlock() });
+                this.logger.log(Level.FINEST, "Lock access denied to {0} at {1}", new Object[] { interaction.getPlayer().getName(), interaction.getClickedBlock() });
                 return;
             }
 
@@ -210,7 +215,7 @@ public class Locksmith implements Listener {
         // check for default owner substitute (Long names won't fit on a sign)
         final String owner = this.aliaser.alias(interaction.getPlayer().getName());
         if (owner.length() > Locksmith.MAXIMUM_SIGN_LINE_LENGTH) {
-            Main.courier.send(interaction.getPlayer(), "requires-alias", owner, owner.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
+            this.courier.send(interaction.getPlayer(), "requires-alias", owner, owner.length(), Locksmith.MAXIMUM_SIGN_LINE_LENGTH);
             return;
         }
 
@@ -242,8 +247,9 @@ public class Locksmith implements Listener {
         if (lock.hasAccess(broken.getPlayer())) return;
 
         broken.setCancelled(true);
-        Main.courier.send(broken.getPlayer(), "denied", lock.accessNames());
-        this.plugin.getLogger().log(Level.FINEST, "Cancelled block break by {0} to protect lock at {1}", new Object[] { broken.getPlayer().getName(), broken.getBlock() });
+        final List<String> names = ConfigurationJoinListFactory.<String>create().config(this.courier.getBase()).prefix("access-").elements(lock.accessNames()).build();
+        this.courier.send(broken.getPlayer(), "denied", names);
+        this.logger.log(Level.FINEST, "Cancelled block break by {0} to protect lock at {1}", new Object[] { broken.getPlayer().getName(), broken.getBlock() });
 
         lock.sign.update();
     }

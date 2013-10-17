@@ -1,39 +1,39 @@
 package edgruberman.bukkit.simplelocks.commands;
 
 import java.util.HashSet;
+import java.util.List;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import edgruberman.bukkit.simplelocks.Lock;
 import edgruberman.bukkit.simplelocks.Locksmith;
-import edgruberman.bukkit.simplelocks.Main;
+import edgruberman.bukkit.simplelocks.commands.util.CancellationContingency;
+import edgruberman.bukkit.simplelocks.commands.util.ExecutionRequest;
+import edgruberman.bukkit.simplelocks.commands.util.FeedbackExecutor;
+import edgruberman.bukkit.simplelocks.messaging.Courier.ConfigurationCourier;
+import edgruberman.bukkit.simplelocks.util.Feedback;
 
-public class Describe implements CommandExecutor {
+public class Describe extends FeedbackExecutor {
 
     private final Locksmith locksmith;
 
-    public Describe(final Locksmith locksmith) {
+    public Describe(final ConfigurationCourier courier, final Locksmith locksmith) {
+        super(courier);
         this.locksmith = locksmith;
     }
 
     @Override
-    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-        if (!(sender instanceof Player)) {
-            Main.courier.send(sender, "requires-player");
-            return true;
-        }
-
-        final Player player = (Player) sender;
+    protected boolean executeImplementation(final ExecutionRequest request) throws CancellationContingency {
+        final Player player = (Player) request.getSender();
         final Lock lock = this.locksmith.findLock(player.getTargetBlock((HashSet<Byte>) null, 4));
         if (lock == null) {
-            Main.courier.send(sender, "requires-lock");
+            this.courier.send(request.getSender(), "requires-lock");
+            Feedback.COMMAND_RESULT_FAILURE.send(player);
             return true;
         }
 
-        Main.courier.send(player, "describe", lock.accessNames(), lock.hasAccess(player)?1:0);
+        final List<String> names = this.<String>joinFactory().prefix("access-").elements(lock.accessNames()).build();
+        this.courier.send(request.getSender(), "describe", names, lock.hasAccess(player)?1:0);
         return true;
     }
 

@@ -3,8 +3,6 @@ package edgruberman.bukkit.simplelocks;
 import java.io.File;
 import java.util.logging.Level;
 
-import org.bukkit.event.HandlerList;
-
 import edgruberman.bukkit.simplelocks.commands.Alias;
 import edgruberman.bukkit.simplelocks.commands.Break;
 import edgruberman.bukkit.simplelocks.commands.Describe;
@@ -13,24 +11,24 @@ import edgruberman.bukkit.simplelocks.commands.Reload;
 import edgruberman.bukkit.simplelocks.commands.Revoke;
 import edgruberman.bukkit.simplelocks.messaging.Courier.ConfigurationCourier;
 import edgruberman.bukkit.simplelocks.util.BufferedYamlConfiguration;
-import edgruberman.bukkit.simplelocks.util.CustomPlugin;
 import edgruberman.bukkit.simplelocks.util.Feedback;
+import edgruberman.bukkit.simplelocks.util.StandardPlugin;
 
-public class Main extends CustomPlugin {
+public class Main extends StandardPlugin {
 
-    public static ConfigurationCourier courier;
+    static final String FILE_LANGUAGE = "language.yml";
 
     @Override
     public void onLoad() {
-        this.putConfigMinimum("3.4.0a0");
-        this.putConfigMinimum("language.yml", "3.4.0b2");
+        this.putDefinition(StandardPlugin.CONFIGURATION_FILE, Configuration.getDefinition(StandardPlugin.CONFIGURATION_FILE));
+        this.putDefinition(Main.FILE_LANGUAGE, Configuration.getDefinition(Main.FILE_LANGUAGE));
         Feedback.register(this, this.getServer().getScheduler());
     }
 
     @Override
     public void onEnable() {
         this.reloadConfig();
-        Main.courier = ConfigurationCourier.Factory.create(this).setBase(this.loadConfig("language.yml")).setFormatCode("format-code").build();
+        final ConfigurationCourier courier = ConfigurationCourier.Factory.create(this).setBase(this.loadConfig(Main.FILE_LANGUAGE)).setFormatCode("format-code").build();
 
         // title
         final String title = this.getConfig().getString("title");
@@ -54,24 +52,19 @@ public class Main extends CustomPlugin {
         if (this.getConfig().getBoolean("auto-alias.enabled")) this.getServer().getPluginManager().registerEvents(aliaser, this);
 
         // locksmith
-        final Locksmith locksmith = new Locksmith(this, title, aliaser, this.getConfig().getStringList("permissions"));
+        final Locksmith locksmith = new Locksmith(courier, this.getLogger(), title, aliaser, this.getConfig().getStringList("permissions"));
+        this.getServer().getPluginManager().registerEvents(locksmith, this);
 
         // explosive protection
         if (this.getConfig().getBoolean("explosion-protection")) new ExplosiveOrdnanceDisposal(this, locksmith);
 
         // commands
-        this.getCommand("simplelocks:describe").setExecutor(new Describe(locksmith));
-        this.getCommand("simplelocks:grant").setExecutor(new Grant(locksmith, aliaser));
-        this.getCommand("simplelocks:revoke").setExecutor(new Revoke(locksmith, aliaser));
-        this.getCommand("simplelocks:alias").setExecutor(new Alias(aliaser));
-        this.getCommand("simplelocks:break").setExecutor(new Break(locksmith));
-        this.getCommand("simplelocks:reload").setExecutor(new Reload(this));
-    }
-
-    @Override
-    public void onDisable() {
-        HandlerList.unregisterAll(this);
-        Main.courier = null;
+        this.getCommand("simplelocks:describe").setExecutor(new Describe(courier, locksmith));
+        this.getCommand("simplelocks:grant").setExecutor(new Grant(courier, this.getServer(), locksmith, aliaser));
+        this.getCommand("simplelocks:revoke").setExecutor(new Revoke(courier, this.getServer(), locksmith, aliaser));
+        this.getCommand("simplelocks:alias").setExecutor(new Alias(courier, aliaser));
+        this.getCommand("simplelocks:break").setExecutor(new Break(courier, locksmith));
+        this.getCommand("simplelocks:reload").setExecutor(new Reload(courier, this));
     }
 
 }

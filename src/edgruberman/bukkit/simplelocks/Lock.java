@@ -1,13 +1,12 @@
 package edgruberman.bukkit.simplelocks;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-
-import edgruberman.bukkit.simplelocks.util.JoinList;
 
 /** sign block that defines access information for the attached block */
 public class Lock {
@@ -40,13 +39,16 @@ public class Lock {
     }
 
     public List<String> getAccess() {
-        final String[] lines = this.sign.getLines();
-        final List<String> access = new JoinList<String>(Main.courier.getBase().getConfigurationSection("access"));
-        for (int i = 1; i <= 3; i++)
-            if (lines[i].length() > 0)
-                access.add(lines[i]);
+        final List<String> result = new ArrayList<String>();
 
-        return access;
+        final String[] lines = this.sign.getLines();
+        for (int i = 1; i <= 3; i++) {
+            if (lines[i].length() > 0) {
+                result.add(lines[i]);
+            }
+        }
+
+        return result;
     }
 
     /**
