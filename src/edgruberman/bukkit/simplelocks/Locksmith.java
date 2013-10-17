@@ -13,6 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Sign;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -20,7 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import edgruberman.bukkit.simplelocks.commands.util.ConfigurationJoinListFactory;
@@ -256,6 +259,39 @@ public class Locksmith implements Listener {
         this.logger.log(Level.FINEST, "Cancelled block break by {0} to protect lock at {1}", new Object[] { broken.getPlayer().getName(), broken.getBlock() });
 
         lock.sign.update();
+    }
+
+    /** cancel move when either source or destination is locked */
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryMove(final InventoryMoveItemEvent move) {
+        final Block source = Locksmith.chestOf(move.getSource().getHolder());
+        if (source != null && this.isLocked(source)) {
+            move.setCancelled(true);
+            return;
+        }
+
+        final Block destination = Locksmith.chestOf(move.getDestination().getHolder());
+        if (destination != null && this.isLocked(destination)) {
+            move.setCancelled(true);
+            return;
+        }
+    }
+
+    private static Block chestOf(final InventoryHolder holder) {
+        // double chest
+        if (holder instanceof DoubleChest) {
+            final DoubleChest dc = (DoubleChest) holder;
+            final Chest c = (Chest) dc.getLeftSide();
+            return c.getBlock();
+
+        // single chest
+        } else if (holder instanceof Chest) {
+            final Chest c = (Chest) holder;
+            return c.getBlock();
+        }
+
+        // not single or double
+        return null;
     }
 
 }
